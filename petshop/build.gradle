@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.0'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id 'idea'
+	id "org.flywaydb.flyway" version "8.4.3"
 }
 
 group = 'com.metaway'
@@ -19,17 +21,64 @@ repositories {
 }
 
 dependencies {
+	// Actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// Spring Boot
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Flyway
 	implementation 'org.flywaydb:flyway-core'
+
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// DevTools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// PostgreSQL
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//Webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// SpringDoc
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-webflux-ui', version: '1.6.3'
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.3'
+	implementation 'org.springdoc:springdoc-openapi-webflux-core:1.6.3'
+
+
+	// JWT
+	implementation 'com.auth0:java-jwt:3.18.1'
+
+
+
+	// Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
+
+flyway {
+	url = 'jdbc:postgresql://localhost:5432/petshop'
+	user = 'postgres'
+	password = '123456'
+	driver = 'org.postgresql.Driver'
+	cleanDisabled = false
+}
+
+build.dependsOn(flywayMigrate)
 
 tasks.named('test') {
 	useJUnitPlatform()
