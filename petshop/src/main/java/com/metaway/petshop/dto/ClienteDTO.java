@@ -1,12 +1,13 @@
-package com.metaway.petshop.entities;
+package com.metaway.petshop.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -15,19 +16,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode(of = "clienteUuid") // Alterado para clienteUuid
-@Entity
-@Table(name = "tb_cliente")
-public class Cliente implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ClienteDTO {
 
     @Schema(description = "Código de identificação do cliente")
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cliente_uuid") // Adicionado para renomear a coluna no banco de dados
-    private UUID clienteUuid; // Alterado para clienteUuid
+    private UUID clienteUuid;
 
     @Schema(description = "Nome do cliente")
     private String nomeDoCliente;
@@ -40,9 +32,7 @@ public class Cliente implements Serializable {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate dataDeCadastro;
 
-    @OneToMany(mappedBy = "cliente")
-    private List<Endereco> enderecos;
+    private List<EnderecoDTO> enderecos;
 
-    @OneToMany(mappedBy = "cliente")
-    private List<Pets> pets;
+    private List<PetsDTO> pets;
 }

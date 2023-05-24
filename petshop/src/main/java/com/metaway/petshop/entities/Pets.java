@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "uuid")
+@EqualsAndHashCode(of = "petsUuid") // Alterado para petsUuid
 @Entity
 @Table(name = "tb_pets")
 public class Pets implements Serializable {
@@ -25,7 +25,8 @@ public class Pets implements Serializable {
     @Schema(description = "Código de identificação do pet")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID uuid;
+    @Column(name = "pets_uuid") // Adicionado para renomear a coluna no banco de dados
+    private UUID petsUuid; // Alterado para petsUuid
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")

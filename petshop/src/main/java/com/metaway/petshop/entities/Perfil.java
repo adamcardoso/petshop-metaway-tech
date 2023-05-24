@@ -16,13 +16,14 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "tb_perfil")
-@EqualsAndHashCode(of = "uuid")
+@EqualsAndHashCode(of = "perfilUuid") // Alterado para perfilUuid
 public class Perfil implements GrantedAuthority, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID uuid;
+    @Column(name = "perfil_uuid") // Adicionado para renomear a coluna no banco de dados
+    private UUID perfilUuid; // Alterado para perfilUuid
 
     @Enumerated(EnumType.STRING)
     private PerfilEnum nomeDoPerfil;

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -13,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "uuid")
+@EqualsAndHashCode(of = "enderecoUuid") // Alterado para enderecoUuid
 @Entity
 @Table(name = "tb_endereco")
 public class Endereco implements Serializable {
@@ -23,7 +22,8 @@ public class Endereco implements Serializable {
     @Schema(description = "Código de identificação do endereço")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID uuid;
+    @Column(name = "endereco_uuid") // Adicionado para renomear a coluna no banco de dados
+    private UUID enderecoUuid; // Alterado para enderecoUuid
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")

@@ -22,7 +22,8 @@ public class Usuario implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID uuid;
+    @Column(name = "usuario_uuid")
+    private UUID usuarioUuid;
 
     private String cpf;
 
@@ -36,7 +37,6 @@ public class Usuario implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "perfil_id"))
     private Set<Perfil> perfis;
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -45,7 +45,6 @@ public class Usuario implements UserDetails, Serializable {
         }
         return authorities;
     }
-
 
     @Override
     public String getPassword() {
@@ -81,12 +80,11 @@ public class Usuario implements UserDetails, Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Usuario usuario)) return false;
-
-        return Objects.equals(uuid, usuario.uuid);
+        return Objects.equals(usuarioUuid, usuario.usuarioUuid);
     }
 
     @Override
     public int hashCode() {
-        return uuid != null ? uuid.hashCode() : 0;
+        return usuarioUuid != null ? usuarioUuid.hashCode() : 0;
     }
 }

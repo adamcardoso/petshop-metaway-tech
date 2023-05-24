@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "uuid")
+@EqualsAndHashCode(of = "contatoUuid") // Alterado para contatoUuid
 @Entity
 @Table(name = "tb_contato")
 public class Contato implements Serializable {
@@ -22,7 +22,8 @@ public class Contato implements Serializable {
     @Schema(description = "Código de identificação do contato")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID uuid;
+    @Column(name = "contato_uuid") // Adicionado para renomear a coluna no banco de dados
+    private UUID contatoUuid; // Alterado para contatoUuid
 
     private String tag;
 
