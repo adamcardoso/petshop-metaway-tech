@@ -16,7 +16,7 @@ import java.util.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_user")
+@Table(name = "tb_usuario")
 public class Usuario implements UserDetails, Serializable {
 
     private static final long serialVersionUID = 1L;

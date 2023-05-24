@@ -8,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -18,30 +17,29 @@ import java.util.UUID;
 @ToString
 @EqualsAndHashCode(of = "uuid")
 @Entity
-@Table(name = "tb_cliente")
-public class Cliente implements Serializable {
+@Table(name = "tb_pets")
+public class Pets implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "Código de identificação do cliente")
+    @Schema(description = "Código de identificação do pet")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID uuid;
 
-    @Schema(description = "Nome do cliente")
-    private String nomeDoCliente;
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
 
-    @Schema(description = "CPF do cliente")
-    private String cpf;
+    @ManyToOne
+    @JoinColumn(name = "raca_id")
+    private Raca raca;
 
-    @Schema(description = "Data de cadastro do cliente")
+    @Schema(description = "Data de nascimento do pet")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate dataDeCadastro;
+    private LocalDate dataDeNascimentoDoPet;
 
-    @OneToMany(mappedBy = "cliente")
-    private List<Endereco> enderecos;
-
-    @OneToMany(mappedBy = "cliente")
-    private List<Pets> pets;
+    @Schema(description = "Nome do pet")
+    private String nomeDoPet;
 }
