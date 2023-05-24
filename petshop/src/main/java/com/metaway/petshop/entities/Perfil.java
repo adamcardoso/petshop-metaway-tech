@@ -1,7 +1,7 @@
 package com.metaway.petshop.entities;
 
 import com.metaway.petshop.entities.enums.PerfilEnum;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
