@@ -1,6 +1,6 @@
 package com.metaway.petshop.entities.enums;
 
-public enum Perfil {
+public enum PerfilEnum {
     ADMIN,
     CLIENTE;
 }

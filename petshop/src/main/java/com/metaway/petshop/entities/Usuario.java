@@ -1,6 +1,5 @@
 package com.metaway.petshop.entities;
 
-import com.metaway.petshop.entities.enums.Perfil;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,14 +28,24 @@ public class Usuario implements UserDetails, Serializable {
 
     private String nomeDoUsuario;
 
-    private Set<Perfil> perfil = new HashSet<>();
-
     private String senha;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "tb_usuario_perfil",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "perfil_id"))
+    private Set<Perfil> perfis;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(perfil.toString()));
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (Perfil perfil : perfis) {
+            authorities.add(new SimpleGrantedAuthority(perfil.toString()));
+        }
+        return authorities;
     }
+
 
     @Override
     public String getPassword() {
