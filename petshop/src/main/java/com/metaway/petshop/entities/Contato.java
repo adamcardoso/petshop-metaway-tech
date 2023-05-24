@@ -21,8 +21,7 @@ public class Contato implements Serializable {
 
     @Schema(description = "Código de identificação do contato")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "contato_uuid") // Adicionado para renomear a coluna no banco de dados
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID contatoUuid; // Alterado para contatoUuid
 
     private String tag;

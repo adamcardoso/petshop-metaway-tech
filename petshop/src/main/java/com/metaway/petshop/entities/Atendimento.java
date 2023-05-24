@@ -21,8 +21,7 @@ public class Atendimento implements Serializable {
 
     @Schema(description = "Código de identificação do atendimento")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "atendimento_uuid") // Adicionado para renomear a coluna no banco de dados
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID atendimentoUuid; // Alterado para atendimentoUuid
 
     @ManyToOne

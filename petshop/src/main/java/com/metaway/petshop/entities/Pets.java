@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "petsUuid") // Alterado para petsUuid
+@EqualsAndHashCode(of = "petsUuid")
 @Entity
 @Table(name = "tb_pets")
 public class Pets implements Serializable {
@@ -24,9 +25,8 @@ public class Pets implements Serializable {
 
     @Schema(description = "Código de identificação do pet")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pets_uuid") // Adicionado para renomear a coluna no banco de dados
-    private UUID petsUuid; // Alterado para petsUuid
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID petsUuid;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -43,4 +43,14 @@ public class Pets implements Serializable {
 
     @Schema(description = "Nome do pet")
     private String nomeDoPet;
+
+    public void setClienteId(UUID clienteUuid) {
+        this.cliente = new Cliente();
+        this.cliente.setClienteUuid(clienteUuid);
+    }
+
+    public void setRacaId(UUID racaId) {
+        this.raca = new Raca();
+        this.raca.setRacaUuid(racaId);
+    }
 }

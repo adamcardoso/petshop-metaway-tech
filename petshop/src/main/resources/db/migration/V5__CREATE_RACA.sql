@@ -1,4 +1,4 @@
 CREATE TABLE tb_raca (
-  racaUuid UUID PRIMARY KEY,
+  raca_Uuid UUID PRIMARY KEY,
   descricao VARCHAR(255)
 );

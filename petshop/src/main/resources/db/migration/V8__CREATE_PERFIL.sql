@@ -1,4 +1,4 @@
 CREATE TABLE tb_perfil (
-  perfilUuid UUID PRIMARY KEY,
-  nomeDoPerfil VARCHAR(255)
+  perfil_Uuid UUID PRIMARY KEY,
+  nome_Do_Perfil VARCHAR(255)
 );

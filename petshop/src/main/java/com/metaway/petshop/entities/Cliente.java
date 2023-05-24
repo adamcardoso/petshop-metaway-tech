@@ -25,8 +25,7 @@ public class Cliente implements Serializable {
 
     @Schema(description = "Código de identificação do cliente")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cliente_uuid") // Adicionado para renomear a coluna no banco de dados
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID clienteUuid; // Alterado para clienteUuid
 
     @Schema(description = "Nome do cliente")

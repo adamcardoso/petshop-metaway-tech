@@ -3,6 +3,7 @@ package com.metaway.petshop.entities;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -21,8 +22,7 @@ public class Raca implements Serializable {
 
     @Schema(description = "Código de identificação do pet")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "raca_uuid") // Adicionado para renomear a coluna no banco de dados
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID racaUuid; // Alterado para racaUuid
 
     private String descricao;

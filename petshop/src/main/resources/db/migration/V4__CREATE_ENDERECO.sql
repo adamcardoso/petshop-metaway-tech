@@ -1,10 +1,10 @@
 CREATE TABLE tb_endereco (
-  enderecoUuid UUID PRIMARY KEY,
+  endereco_Uuid UUID PRIMARY KEY,
   cliente_id UUID,
   logradouro VARCHAR(255),
   cidade VARCHAR(255),
   bairro VARCHAR(255),
   complemento VARCHAR(255),
   tag VARCHAR(255),
-  FOREIGN KEY (cliente_id) REFERENCES tb_cliente (clienteUuid)
+  FOREIGN KEY (cliente_id) REFERENCES tb_cliente (cliente_Uuid)
 );

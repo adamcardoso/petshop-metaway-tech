@@ -21,8 +21,7 @@ public class Perfil implements GrantedAuthority, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "perfil_uuid") // Adicionado para renomear a coluna no banco de dados
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID perfilUuid; // Alterado para perfilUuid
 
     @Enumerated(EnumType.STRING)

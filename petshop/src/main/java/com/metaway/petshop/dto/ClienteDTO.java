@@ -1,6 +1,7 @@
 package com.metaway.petshop.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.metaway.petshop.entities.Cliente;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,4 +36,11 @@ public class ClienteDTO {
     private List<EnderecoDTO> enderecos;
 
     private List<PetsDTO> pets;
+
+    public ClienteDTO(Cliente cliente) {
+        this.clienteUuid = cliente.getClienteUuid();
+        this.nomeDoCliente = cliente.getNomeDoCliente();
+        this.cpf = cliente.getCpf();
+        this.dataDeCadastro = cliente.getDataDeCadastro();
+    }
 }

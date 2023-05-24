@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "enderecoUuid") // Alterado para enderecoUuid
+@EqualsAndHashCode(of = "enderecoUuid")
 @Entity
 @Table(name = "tb_endereco")
 public class Endereco implements Serializable {
@@ -21,9 +21,8 @@ public class Endereco implements Serializable {
 
     @Schema(description = "Código de identificação do endereço")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "endereco_uuid") // Adicionado para renomear a coluna no banco de dados
-    private UUID enderecoUuid; // Alterado para enderecoUuid
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID enderecoUuid;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -38,4 +37,9 @@ public class Endereco implements Serializable {
     private String complemento;
 
     private String tag;
+
+    public void setClienteId(UUID clienteUuid) {
+        this.cliente = new Cliente();
+        this.cliente.setClienteUuid(clienteUuid);
+    }
 }

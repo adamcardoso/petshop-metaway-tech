@@ -1,9 +1,9 @@
 CREATE TABLE tb_pets (
-  petsUuid UUID PRIMARY KEY,
+  pets_Uuid UUID PRIMARY KEY,
   cliente_id UUID,
   raca_id UUID,
-  dataDeNascimentoDoPet DATE,
-  nomeDoPet VARCHAR(255),
-  FOREIGN KEY (cliente_id) REFERENCES tb_cliente (clienteUuid),
-  FOREIGN KEY (raca_id) REFERENCES tb_raca (racaUuid)
+  data_De_Nascimento_Do_Pet DATE,
+  nome_Do_Pet VARCHAR(255),
+  FOREIGN KEY (cliente_id) REFERENCES tb_cliente (cliente_Uuid),
+  FOREIGN KEY (raca_id) REFERENCES tb_raca (raca_Uuid)
 );

@@ -1,6 +1,6 @@
 CREATE TABLE tb_cliente (
-  clienteUuid UUID PRIMARY KEY,
-  nomeDoCliente VARCHAR(255),
+  cliente_Uuid UUID PRIMARY KEY,
+  nome_Do_Cliente VARCHAR(255),
   cpf VARCHAR(255),
-  dataDeCadastro DATE
+  data_De_Cadastro DATE
 );
