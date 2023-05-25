@@ -37,6 +37,12 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
+    @GetMapping("/cliente")
+    public ResponseEntity<List<ClienteDTO>> findAll() {
+        List<ClienteDTO> list = clienteService.findAll();
+        return ResponseEntity.ok().body(list);
+    }
+
     @Operation(description = "API para buscar pessoas por id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Retorno OK da Lista de transações"),
             @ApiResponse(responseCode = "401", description = "Erro de autenticação dessa API"),
