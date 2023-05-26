@@ -34,7 +34,7 @@ public class TokenFilter extends OncePerRequestFilter {
             token = authorizationHeader.substring(7);
             if (tokenService.validarToken(token)) {
                 String subject = tokenService.getSubject(token);
-                Usuario usuario = usuarioRepository.findByUsername(subject);
+                Usuario usuario = usuarioRepository.findByNomeDoUsuario(subject);
                 if (!Objects.isNull(usuario)) {
                     var authentication = new UsernamePasswordAuthenticationToken(
                             usuario, null, usuario.getPerfis());

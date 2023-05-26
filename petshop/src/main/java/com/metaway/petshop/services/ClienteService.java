@@ -92,13 +92,13 @@ public class ClienteService {
     }
 
     private Cliente copyDtoToEntity(ClienteDTO dto, Cliente entity) {
-        entity.setNomeDoCliente(dto.getNomeDoCliente());
-        entity.setCpf(dto.getCpf());
-        entity.setDataDeCadastro(dto.getDataDeCadastro());
-        entity.setEnderecos(dto.getEnderecos().stream()
+        entity.setNomeDoCliente(dto.nomeDoCliente());
+        entity.setCpf(dto.cpf());
+        entity.setDataDeCadastro(dto.dataDeCadastro());
+        entity.setEnderecos(dto.enderecos().stream()
                 .map(EnderecoDTO::toEntity)
                 .collect(Collectors.toList()));
-        entity.setPets(dto.getPets().stream()
+        entity.setPets(dto.pets().stream()
                 .map(PetsDTO::toEntity)
                 .collect(Collectors.toList()));
         return entity;

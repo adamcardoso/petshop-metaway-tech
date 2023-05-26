@@ -7,11 +7,10 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class RacaDTO {
-    private UUID racaUuid;
-    private String descricao;
+public record RacaDTO(
+        UUID racaUuid,
+        String descricao
+) {
+
 }
+

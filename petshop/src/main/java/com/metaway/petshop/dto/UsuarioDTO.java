@@ -26,4 +26,18 @@ public class UsuarioDTO {
         senha = entity.getSenha();
         perfis = entity.getPerfis();
     }
+
+    public UsuarioDTO(
+            UUID usuarioUuid,
+            String cpf,
+            String nomeDoUsuario,
+            String senha,
+            Set<Perfil> perfis
+    ) {
+        this.usuarioUuid = usuarioUuid;
+        this.cpf = cpf;
+        this.nomeDoUsuario = nomeDoUsuario;
+        this.senha = senha;
+        this.perfis = perfis;
+    }
 }

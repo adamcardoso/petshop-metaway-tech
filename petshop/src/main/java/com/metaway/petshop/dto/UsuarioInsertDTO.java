@@ -1,26 +1,14 @@
 package com.metaway.petshop.dto;
 
+import com.metaway.petshop.entities.Perfil;
 import com.metaway.petshop.services.validation.UsuarioInsertValid;
 
+import java.util.Set;
+import java.util.UUID;
+
 @UsuarioInsertValid
-public class UsuarioInsertDTO extends UsuarioDTO {
-    private static final long serialVersionUID = 1L;
-
-    private String password;
-
-    UsuarioInsertDTO() {
-        super();
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+public record UsuarioInsertDTO(String senha, UUID usuarioUuid, String cpf, String nomeDoUsuario, Set<Perfil> perfis) {
     public String getUsername() {
-        return super.getNomeDoUsuario();
+        return nomeDoUsuario;
     }
 }

@@ -1,21 +1,15 @@
 package com.metaway.petshop.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.UUID;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class ContatoDTO {
-    private UUID contatoUuid;
-    private String tag;
-    private String email;
-    private String telefone;
-    private String valor;
-    private UUID clienteId;
+public record ContatoDTO(
+        UUID contatoUuid,
+        String tag,
+        String email,
+        String telefone,
+        String valor,
+        UUID clienteId
+) {
+
 }
+

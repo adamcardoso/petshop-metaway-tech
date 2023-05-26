@@ -47,7 +47,7 @@ public class UsuarioService {
         Usuario entity = new Usuario();
 
         copyDtoToEntity(userInsertDTO, entity);
-        entity.setSenha(passwordEncoder.encode(userInsertDTO.getPassword())); //encrypting the password
+        entity.setSenha(passwordEncoder.encode(userInsertDTO.senha())); // encrypting the senha
 
         entity = usuarioRepository.save(entity);
 
@@ -58,7 +58,7 @@ public class UsuarioService {
     public UsuarioDTO update(UUID id, UsuarioUpdateDTO userDTO) {
         try {
             Optional<Usuario> optionalEntity = usuarioRepository.findById(id);
-            if(optionalEntity.isPresent()) {
+            if (optionalEntity.isPresent()) {
                 Usuario entity = optionalEntity.get();
                 copyDtoToEntity(userDTO, entity);
                 entity = usuarioRepository.save(entity);
@@ -94,16 +94,19 @@ public class UsuarioService {
         return personModelList.stream().map(UsuarioDTO::new).collect(Collectors.toList());
     }
 
-    private void copyDtoToEntity(UsuarioDTO userDTO, Usuario entity) {
-        entity.setNomeDoUsuario(userDTO.getNomeDoUsuario());
-        entity.setCpf(userDTO.getCpf());
-        entity.setSenha(userDTO.getSenha());
+    private void copyDtoToEntity(UsuarioInsertDTO userDTO, Usuario entity) {
+        entity.setNomeDoUsuario(userDTO.nomeDoUsuario());
+        entity.setCpf(userDTO.cpf());
+        entity.setSenha(passwordEncoder.encode(userDTO.senha()));
 
         entity.getPerfis().clear();
 
-        for (Perfil perfil : userDTO.getPerfis()) {
+        for (Perfil perfil : userDTO.perfis()) {
             perfilRepository.findById(perfil.getPerfilUuid()).ifPresent(entity.getPerfis()::add);
         }
     }
 
+    private void copyDtoToEntity(UsuarioUpdateDTO userDTO, Usuario entity) {
+        entity.setNomeDoUsuario(userDTO.nomeDoUsuario());
+    }
 }
