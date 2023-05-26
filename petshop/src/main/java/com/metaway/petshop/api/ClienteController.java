@@ -1,109 +1,65 @@
 package com.metaway.petshop.api;
 
 import com.metaway.petshop.dto.ClienteDTO;
-import com.metaway.petshop.exceptions.ResourceNotFoundException;
-import com.metaway.petshop.services.ClienteService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-@RestController
-@RequestMapping(value = "/api")
-@OpenAPIDefinition
-@Tag(name = "/api", description = "Grupo de API's para manipulação de dados do cliente")
-public class ClienteController {
+public interface ClienteController {
 
-    private final ClienteService clienteService;
-
-    public ClienteController(ClienteService clienteService) {
-        this.clienteService = clienteService;
-    }
-
+    @Operation(description = "API para buscar todas as pessoas")
     @GetMapping("/cliente")
-    public ResponseEntity<List<ClienteDTO>> findAll() {
-        List<ClienteDTO> list = clienteService.findAll();
-        return ResponseEntity.ok().body(list);
-    }
+    ResponseEntity<List<ClienteDTO>> findAll();
 
-    @Operation(description = "API para buscar pessoas por id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Retorno OK da Lista de transações"),
+    @Operation(description = "API para buscar pessoa por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorno OK da pessoa encontrada"),
             @ApiResponse(responseCode = "401", description = "Erro de autenticação dessa API"),
             @ApiResponse(responseCode = "403", description = "Erro de autorização dessa API"),
-            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")
+    })
     @Parameters(value = {@Parameter(name = "id", in = ParameterIn.PATH)})
-    @ResponseBody
     @GetMapping(value = "/cliente/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClienteDTO> findById(@PathVariable("id") UUID uuid) {
-        Optional<ClienteDTO> clienteDTO = clienteService.findById(uuid);
-        if (clienteDTO.isPresent()) {
-            return ResponseEntity.ok(clienteDTO.get());
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso não encontrado");
-        }
-    }
+    ResponseEntity<ClienteDTO> findById(@PathVariable("id") UUID uuid);
 
-    @Operation(description = "API para buscar os transações por nome da pessoa")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Retorno OK da Lista de transações"),
+    @Operation(description = "API para buscar pessoa por nome")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorno OK da Lista de pessoas"),
             @ApiResponse(responseCode = "401", description = "Erro de autenticação dessa API"),
             @ApiResponse(responseCode = "403", description = "Erro de autorização dessa API"),
-            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
-    @Parameters(value = {@Parameter(name = "id", in = ParameterIn.PATH)})
-    @ResponseBody
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")
+    })
+    @Parameters(value = {@Parameter(name = "name", in = ParameterIn.QUERY)})
     @GetMapping(value = "/cliente/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ClienteDTO>> findByName(@RequestParam("name") String name) {
-        try {
-            List<ClienteDTO> clienteDTOs = clienteService.findByName(name);
+    ResponseEntity<List<ClienteDTO>> findByName(@RequestParam("name") String name);
 
-            return ResponseEntity.ok().body(clienteDTOs);
-        } catch (ResourceNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @Operation(description = "API para inserir dados de uma pessoa no banco")
-    @ResponseBody
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Retorno OK com a transação criada."),
+    @Operation(description = "API para inserir uma pessoa")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Retorno OK com a pessoa criada"),
             @ApiResponse(responseCode = "401", description = "Erro de autenticação dessa API"),
             @ApiResponse(responseCode = "403", description = "Erro de autorização dessa API"),
             @ApiResponse(responseCode = "404", description = "Recurso não encontrado")
     })
     @PostMapping(value = "/cliente", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClienteDTO> insert(@Valid @RequestBody ClienteDTO dto) {
-        dto = clienteService.insert(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dto.getCpf()).toUri();
+    ResponseEntity<ClienteDTO> insert(@Valid @RequestBody ClienteDTO dto);
 
-        return ResponseEntity.created(uri).body(dto);
-    }
-
+    @Operation(description = "API para atualizar uma pessoa")
     @PutMapping(value = "/cliente/{id}")
-    public ResponseEntity<ClienteDTO> update(@PathVariable("id") UUID id, @Valid @RequestBody ClienteDTO dto) {
-        dto = clienteService.update(id, dto);
-        return ResponseEntity.ok().body(dto);
-    }
+    ResponseEntity<ClienteDTO> update(@PathVariable("id") UUID id, @Valid @RequestBody ClienteDTO dto);
 
-
+    @Operation(description = "API para excluir uma pessoa")
     @DeleteMapping(value = "/cliente/{uuid}")
-    public ResponseEntity<Void> delete(@PathVariable UUID uuid) {
-        clienteService.delete(uuid);
-        return ResponseEntity.noContent().build();
-    }
+    ResponseEntity<Void> delete(@PathVariable UUID uuid);
 }
+
+

@@ -3,54 +3,41 @@ package com.metaway.petshop.api;
 import com.metaway.petshop.dto.UsuarioDTO;
 import com.metaway.petshop.dto.UsuarioInsertDTO;
 import com.metaway.petshop.dto.UsuarioUpdateDTO;
-import com.metaway.petshop.services.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
-@RequestMapping(value = "/api")
-public class UsuarioController {
-    private final UsuarioService usuarioService;
+public interface UsuarioController {
 
-    public UsuarioController(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
-    }
+    @Operation(description = "API para buscar todos os usuários")
+    @GetMapping("/usuario")
+    ResponseEntity<List<UsuarioDTO>> findAll();
 
-    @GetMapping(value = "/usuario")
-    public ResponseEntity<List<UsuarioDTO>> findAll() {
-        List<UsuarioDTO> list = usuarioService.findAll();
-        return ResponseEntity.ok().body(list);
-    }
+    @Operation(description = "API para buscar usuário por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorno OK do usuário encontrado"),
+            @ApiResponse(responseCode = "401", description = "Erro de autenticação dessa API"),
+            @ApiResponse(responseCode = "403", description = "Erro de autorização dessa API"),
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")
+    })
+    @GetMapping("/usuario/{id}")
+    ResponseEntity<UsuarioDTO> findById(@PathVariable UUID id);
 
-    @GetMapping(value = "/usuario/{id}")
-    public ResponseEntity<UsuarioDTO> findById(@PathVariable UUID id) {
-        UsuarioDTO dto = usuarioService.findById(id);
-        return ResponseEntity.ok().body(dto);
-    }
+    @Operation(description = "API para inserir um novo usuário")
+    @PostMapping("/usuario")
+    ResponseEntity<UsuarioDTO> insert(@RequestBody @Valid UsuarioInsertDTO dto);
 
-    @PostMapping(value = "/usuario")
-    public ResponseEntity<UsuarioDTO> insert(@RequestBody @Valid UsuarioInsertDTO dto) {
-        UsuarioDTO newDto = usuarioService.insert(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(newDto.getUsuarioUuid()).toUri();
-        return ResponseEntity.created(uri).body(newDto);
-    }
+    @Operation(description = "API para atualizar um usuário")
+    @PutMapping("/usuario/{id}")
+    ResponseEntity<UsuarioDTO> update(@PathVariable UUID id, @RequestBody @Valid UsuarioUpdateDTO dto);
 
-    @PutMapping(value = "/usuario/{id}")
-    public ResponseEntity<UsuarioDTO> update(@PathVariable UUID id, @RequestBody @Valid UsuarioUpdateDTO dto) {
-        UsuarioDTO newDto = usuarioService.update(id, dto);
-        return ResponseEntity.ok().body(newDto);
-    }
-
-    @DeleteMapping(value = "/usuario/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        usuarioService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+    @Operation(description = "API para excluir um usuário")
+    @DeleteMapping("/usuario/{id}")
+    ResponseEntity<Void> delete(@PathVariable UUID id);
 }
