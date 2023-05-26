@@ -2,7 +2,7 @@ package com.metaway.petshop.api;
 
 import com.metaway.petshop.dto.ClienteDTO;
 import com.metaway.petshop.exceptions.ResourceNotFoundException;
-import com.metaway.petshop.services.ClienteService;
+import com.metaway.petshop.services.ClienteServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,21 +21,21 @@ import java.util.UUID;
 @RequestMapping(value = "/api")
 public class ClienteControllerImpl implements ClienteController {
 
-    private final ClienteService clienteService;
+    private final ClienteServiceImpl clienteServiceImpl;
 
-    public ClienteControllerImpl(ClienteService clienteService) {
-        this.clienteService = clienteService;
+    public ClienteControllerImpl(ClienteServiceImpl clienteServiceImpl) {
+        this.clienteServiceImpl = clienteServiceImpl;
     }
 
     @Override
     public ResponseEntity<List<ClienteDTO>> findAll() {
-        List<ClienteDTO> list = clienteService.findAll();
+        List<ClienteDTO> list = clienteServiceImpl.findAll();
         return ResponseEntity.ok().body(list);
     }
 
     @Override
     public ResponseEntity<ClienteDTO> findById(UUID uuid) {
-        Optional<ClienteDTO> clienteDTO = clienteService.findById(uuid);
+        Optional<ClienteDTO> clienteDTO = clienteServiceImpl.findById(uuid);
         if (clienteDTO.isPresent()) {
             return ResponseEntity.ok(clienteDTO.get());
         } else {
@@ -46,7 +46,7 @@ public class ClienteControllerImpl implements ClienteController {
     @Override
     public ResponseEntity<List<ClienteDTO>> findByName(String name) {
         try {
-            List<ClienteDTO> clienteDTOs = clienteService.findByName(name);
+            List<ClienteDTO> clienteDTOs = clienteServiceImpl.findByName(name);
             return ResponseEntity.ok().body(clienteDTOs);
         } catch (ResourceNotFoundException ex) {
             return ResponseEntity.notFound().build();
@@ -55,7 +55,7 @@ public class ClienteControllerImpl implements ClienteController {
 
     @Override
     public ResponseEntity<ClienteDTO> insert(@Valid @RequestBody ClienteDTO dto) {
-        dto = clienteService.insert(dto);
+        dto = clienteServiceImpl.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(dto.cpf()).toUri();
         return ResponseEntity.created(uri).body(dto);
@@ -63,13 +63,13 @@ public class ClienteControllerImpl implements ClienteController {
 
     @Override
     public ResponseEntity<ClienteDTO> update(UUID id, @Valid @RequestBody ClienteDTO dto) {
-        dto = clienteService.update(id, dto);
+        dto = clienteServiceImpl.update(id, dto);
         return ResponseEntity.ok().body(dto);
     }
 
     @Override
     public ResponseEntity<Void> delete(UUID uuid) {
-        clienteService.delete(uuid);
+        clienteServiceImpl.delete(uuid);
         return ResponseEntity.noContent().build();
     }
 }
