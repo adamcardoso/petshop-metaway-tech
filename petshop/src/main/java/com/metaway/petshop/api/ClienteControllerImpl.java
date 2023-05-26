@@ -3,6 +3,8 @@ package com.metaway.petshop.api;
 import com.metaway.petshop.dto.ClienteDTO;
 import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.services.ClienteServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +23,8 @@ import java.util.UUID;
 @RequestMapping(value = "/api")
 public class ClienteControllerImpl implements ClienteController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ClienteControllerImpl.class);
+
     private final ClienteServiceImpl clienteServiceImpl;
 
     public ClienteControllerImpl(ClienteServiceImpl clienteServiceImpl) {
@@ -29,12 +33,14 @@ public class ClienteControllerImpl implements ClienteController {
 
     @Override
     public ResponseEntity<List<ClienteDTO>> findAll() {
+        logger.info("Endpoint findAll chamado");
         List<ClienteDTO> list = clienteServiceImpl.findAll();
         return ResponseEntity.ok().body(list);
     }
 
     @Override
     public ResponseEntity<ClienteDTO> findById(UUID uuid) {
+        logger.info("Endpoint findById chamado para o UUID: {}", uuid);
         Optional<ClienteDTO> clienteDTO = clienteServiceImpl.findById(uuid);
         if (clienteDTO.isPresent()) {
             return ResponseEntity.ok(clienteDTO.get());
@@ -45,6 +51,7 @@ public class ClienteControllerImpl implements ClienteController {
 
     @Override
     public ResponseEntity<List<ClienteDTO>> findByName(String name) {
+        logger.info("Endpoint findByName chamado para o nome: {}", name);
         try {
             List<ClienteDTO> clienteDTOs = clienteServiceImpl.findByName(name);
             return ResponseEntity.ok().body(clienteDTOs);
@@ -55,6 +62,7 @@ public class ClienteControllerImpl implements ClienteController {
 
     @Override
     public ResponseEntity<ClienteDTO> insert(@Valid @RequestBody ClienteDTO dto) {
+        logger.info("Endpoint insert chamado");
         dto = clienteServiceImpl.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(dto.cpf()).toUri();
@@ -63,12 +71,14 @@ public class ClienteControllerImpl implements ClienteController {
 
     @Override
     public ResponseEntity<ClienteDTO> update(UUID id, @Valid @RequestBody ClienteDTO dto) {
+        logger.info("Endpoint update chamado para o UUID: {}", id);
         dto = clienteServiceImpl.update(id, dto);
         return ResponseEntity.ok().body(dto);
     }
 
     @Override
     public ResponseEntity<Void> delete(UUID uuid) {
+        logger.info("Endpoint delete chamado para o UUID: {}", uuid);
         clienteServiceImpl.delete(uuid);
         return ResponseEntity.noContent().build();
     }

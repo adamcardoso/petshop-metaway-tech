@@ -62,7 +62,7 @@ public class AuthControllerImpl implements AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (AuthenticationException e) {
-            logger.error("Erro de autenticação", e);
+            logger.error(String.format("Erro de autenticação: %s", e.getMessage()), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
