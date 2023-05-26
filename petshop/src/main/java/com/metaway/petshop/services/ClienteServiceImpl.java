@@ -10,7 +10,6 @@ import com.metaway.petshop.repositories.ClienteRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +93,7 @@ public class ClienteServiceImpl implements ClienteService {
         }
     }
 
-    private Cliente copyDtoToEntity(ClienteDTO dto, Cliente entity) {
+    private void copyDtoToEntity(ClienteDTO dto, Cliente entity) {
         entity.setNomeDoCliente(dto.nomeDoCliente());
         entity.setCpf(dto.cpf());
         entity.setDataDeCadastro(dto.dataDeCadastro());
@@ -104,6 +103,5 @@ public class ClienteServiceImpl implements ClienteService {
         entity.setPets(dto.pets().stream()
                 .map(PetsDTO::toEntity)
                 .collect(Collectors.toList()));
-        return entity;
     }
 }

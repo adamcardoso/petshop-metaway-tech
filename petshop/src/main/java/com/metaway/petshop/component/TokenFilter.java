@@ -1,6 +1,6 @@
 package com.metaway.petshop.component;
 
-import com.metaway.petshop.config.security.TokenService;
+import com.metaway.petshop.config.security.TokenServiceImpl;
 import com.metaway.petshop.entities.Usuario;
 import com.metaway.petshop.repositories.UsuarioRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,11 +18,11 @@ import java.util.Objects;
 @Component
 public class TokenFilter extends OncePerRequestFilter {
 
-    private final TokenService tokenService;
+    private final TokenServiceImpl tokenServiceImpl;
     private final UsuarioRepository usuarioRepository;
 
-    public TokenFilter(TokenService tokenService, UsuarioRepository usuarioRepository) {
-        this.tokenService = tokenService;
+    public TokenFilter(TokenServiceImpl tokenServiceImpl, UsuarioRepository usuarioRepository) {
+        this.tokenServiceImpl = tokenServiceImpl;
         this.usuarioRepository = usuarioRepository;
     }
 
@@ -32,8 +32,8 @@ public class TokenFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         if (!Objects.isNull(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
-            if (tokenService.validarToken(token)) {
-                String subject = tokenService.getSubject(token);
+            if (tokenServiceImpl.validarToken(token)) {
+                String subject = tokenServiceImpl.getSubject(token);
                 Usuario usuario = usuarioRepository.findByNomeDoUsuario(subject);
                 if (!Objects.isNull(usuario)) {
                     var authentication = new UsernamePasswordAuthenticationToken(
@@ -46,7 +46,7 @@ public class TokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } finally {
             if (request.getRequestURI().equals("/api/logout")) {
-                tokenService.invalidarToken(token);
+                tokenServiceImpl.invalidarToken(token);
                 request.getSession().invalidate();
             }
         }

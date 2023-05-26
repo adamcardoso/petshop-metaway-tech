@@ -21,7 +21,7 @@ public class UsuarioInsertValidator implements ConstraintValidator<UsuarioInsert
 
         List<FieldMessage> list = new ArrayList<>();
 
-        Usuario usuario = usuarioRepository.findByNomeDoUsuario(dto.getNomeDoUsuario());
+        Usuario usuario = usuarioRepository.findByNomeDoUsuario(dto.nomeDoUsuario());
         if (usuario != null) {
             list.add(new FieldMessage("usuário", "Usuário já existe"));
         }

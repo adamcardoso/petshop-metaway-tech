@@ -33,7 +33,7 @@ public class UsuarioUpdateValidator implements ConstraintValidator<UsuarioUpdate
 
         List<FieldMessage> list = new ArrayList<>();
 
-        Usuario user = usuarioRepository.findByNomeDoUsuario(dto.getNomeDoUsuario());
+        Usuario user = usuarioRepository.findByNomeDoUsuario(dto.nomeDoUsuario());
         if (user != null && !Long.valueOf(userId).equals(user.getUsuarioUuid().getMostSignificantBits())) {
             list.add(new FieldMessage("username", "Username already exists"));
         }

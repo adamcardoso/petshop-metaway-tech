@@ -11,9 +11,8 @@ import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.repositories.PerfilRepository;
 import com.metaway.petshop.repositories.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;

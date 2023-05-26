@@ -1,15 +1,9 @@
 package com.metaway.petshop.api;
 
-import com.metaway.petshop.config.security.TokenService;
+import com.metaway.petshop.config.security.TokenServiceImpl;
 import com.metaway.petshop.dto.Login;
 import com.metaway.petshop.dto.UsuarioDTO;
 import com.metaway.petshop.entities.Usuario;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -34,11 +28,11 @@ public class AuthControllerImpl implements AuthController {
     public static final String HOME_PAGE_URI = "/home";
     private final AuthenticationManager authenticationManager;
 
-    private final TokenService tokenService;
+    private final TokenServiceImpl tokenServiceImpl;
 
-    public AuthControllerImpl(AuthenticationManager authenticationManager, TokenService tokenService) {
+    public AuthControllerImpl(AuthenticationManager authenticationManager, TokenServiceImpl tokenServiceImpl) {
         this.authenticationManager = authenticationManager;
-        this.tokenService = tokenService;
+        this.tokenServiceImpl = tokenServiceImpl;
     }
 
     @Override
@@ -54,12 +48,12 @@ public class AuthControllerImpl implements AuthController {
             var usuario = (Usuario) authenticate.getPrincipal();
 
             logger.info("Login realizado com sucesso para o usuário {}", usuario.getNomeDoUsuario());
-            String token = tokenService.gerarToken(usuario);
+            String token = tokenServiceImpl.gerarToken(usuario);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER_PREFIX + token);
 
-            if (tokenService.validarToken(token)) {
+            if (tokenServiceImpl.validarToken(token)) {
                 return ResponseEntity.ok()
                         .headers(headers)
                         .location(URI.create(HOME_PAGE_URI))
@@ -76,7 +70,7 @@ public class AuthControllerImpl implements AuthController {
     @Override
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
         try {
-            tokenService.invalidarToken(token);
+            tokenServiceImpl.invalidarToken(token);
             // Redirecionar para a página de login
             //response.sendRedirect(request.getContextPath() + "/login");
             return ResponseEntity.noContent().build();
