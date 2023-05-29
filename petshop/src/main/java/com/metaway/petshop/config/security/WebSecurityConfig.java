@@ -39,13 +39,21 @@ public class WebSecurityConfig {
                 .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/clientes", "/api/usuarios").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/cliente/**").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/cliente/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/cliente/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/cliente/**").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/usuarios").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/cliente/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/cliente/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/usuarios/**").authenticated()
                 .and().cors(corsCustomizer());
 
         http.logout();
 
         return http.build();
     }
+
 
     public Customizer<CorsConfigurer<HttpSecurity>> corsCustomizer() {
         return cors -> cors.configurationSource(corsConfigurationSource());
