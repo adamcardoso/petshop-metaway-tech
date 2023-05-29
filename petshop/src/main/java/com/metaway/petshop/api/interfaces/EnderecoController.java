@@ -15,7 +15,7 @@ public interface EnderecoController {
 
     @Operation(description = "API para buscar todos os endereços")
     @GetMapping("/enderecos")
-    List<EnderecoDTO> findAll();
+    ResponseEntity<List<EnderecoDTO>> findAll();
 
     @Operation(description = "API para buscar endereço por ID")
     @ApiResponses(value = {

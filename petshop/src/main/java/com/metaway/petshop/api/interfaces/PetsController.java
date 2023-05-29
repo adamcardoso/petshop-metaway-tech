@@ -15,7 +15,7 @@ public interface PetsController {
 
     @Operation(description = "API para buscar todos os pets")
     @GetMapping("/pets")
-    List<PetsDTO> findAll();
+    ResponseEntity<List<PetsDTO>> findAll();
 
     @Operation(description = "API para buscar pet por ID")
     @ApiResponses(value = {

@@ -49,7 +49,7 @@ public class UsuarioControllerImpl implements UsuarioController {
         logger.info("Endpoint insert chamado");
         UsuarioDTO newDto = usuarioServiceImpl.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(newDto.getUsuarioUuid()).toUri();
+                .buildAndExpand(newDto.usuarioUuid()).toUri();
         return ResponseEntity.created(uri).body(newDto);
     }
 

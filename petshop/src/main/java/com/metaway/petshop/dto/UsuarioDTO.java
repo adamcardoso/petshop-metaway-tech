@@ -2,42 +2,34 @@ package com.metaway.petshop.dto;
 
 import com.metaway.petshop.entities.Perfil;
 import com.metaway.petshop.entities.Usuario;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Set;
 import java.util.UUID;
 
-@NoArgsConstructor
-@Getter
-@Setter
-public class UsuarioDTO {
-    private UUID usuarioUuid;
-    private String cpf;
-    private String nomeDoUsuario;
-    private String senha;
-    private Set<Perfil> perfis;
-
+public record UsuarioDTO(
+        @Schema(description = "Código de identificação do usuário")
+        UUID usuarioUuid,
+        @Schema(description = "CPF do usuário")
+        String cpf,
+        @Schema(description = "Nome do usuário")
+        String nomeDoUsuario,
+        @Schema(description = "Senha do usuário")
+        String senha,
+        @Schema(description = "Conjunto de perfis do usuário")
+        Set<Perfil> perfis
+) {
     public UsuarioDTO(Usuario entity) {
-        usuarioUuid = entity.getUsuarioUuid();
-        cpf = entity.getCpf();
-        nomeDoUsuario = entity.getNomeDoUsuario();
-        senha = entity.getSenha();
-        perfis = entity.getPerfis();
+        this(
+                entity.getUsuarioUuid(),
+                entity.getCpf(),
+                entity.getNomeDoUsuario(),
+                entity.getSenha(),
+                entity.getPerfis()
+        );
     }
 
-    public UsuarioDTO(
-            UUID usuarioUuid,
-            String cpf,
-            String nomeDoUsuario,
-            String senha,
-            Set<Perfil> perfis
-    ) {
-        this.usuarioUuid = usuarioUuid;
-        this.cpf = cpf;
-        this.nomeDoUsuario = nomeDoUsuario;
-        this.senha = senha;
-        this.perfis = perfis;
+    public UsuarioDTO() {
+        this(UUID.randomUUID(), "", "", "", Set.of());
     }
 }

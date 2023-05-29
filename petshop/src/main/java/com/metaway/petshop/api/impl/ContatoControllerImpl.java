@@ -55,7 +55,7 @@ public class ContatoControllerImpl implements ContatoController {
 
         ContatoDTO insertedContato = contatoServiceImpl.insert(contatoDTO);
 
-        URI uri = URI.create("/api/atendimentos/" + insertedContato.contatoUuid());
+        URI uri = URI.create("/api/contatos/" + insertedContato.contatoUuid());
         return ResponseEntity.created(uri).body(insertedContato);
     }
 

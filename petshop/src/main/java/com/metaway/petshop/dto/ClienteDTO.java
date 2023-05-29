@@ -8,6 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 
 public record ClienteDTO(
         @Schema(description = "Código de identificação do cliente")
@@ -20,7 +22,11 @@ public record ClienteDTO(
         @JsonFormat(pattern = "yyyy-MM-dd")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         LocalDate dataDeCadastro,
+
+        @Schema(description = "Lista de endereços do cliente")
         List<EnderecoDTO> enderecos,
+
+        @Schema(description = "Lista de pets do cliente")
         List<PetsDTO> pets
 ) {
     public ClienteDTO(Cliente cliente) {
@@ -29,8 +35,8 @@ public record ClienteDTO(
                 cliente.getNomeDoCliente(),
                 cliente.getCpf(),
                 cliente.getDataDeCadastro(),
-                null,
-                null
+                cliente.getEnderecos().stream().map(EnderecoDTO::new).collect(Collectors.toList()),
+                cliente.getPets().stream().map(PetsDTO::new).collect(Collectors.toList())
         );
     }
 }

@@ -9,14 +9,25 @@ import java.util.UUID;
 public record AtendimentoDTO(
         @Schema(description = "Código de identificação do atendimento")
         UUID atendimentoUuid,
+
+        @Schema(description = "Pet atendido")
         Pets pet,
+
+        @Schema(description = "Descrição do atendimento")
         String descricaoDoAtendimento,
+
+        @Schema(description = "Valor do atendimento")
         String valorDoAtendimento,
         @Schema(description = "Data do atendimento")
         String dataDoAtendimento
 ) {
         public AtendimentoDTO(Atendimento atendimento) {
-                this(atendimento.getAtendimentoUuid(), atendimento.getPet(), atendimento.getDescricaoDoAtendimento(),
-                        atendimento.getValorDoAtendimento(), atendimento.getDataDoAtendimento());
+                this(
+                        atendimento.getAtendimentoUuid(),
+                        atendimento.getPet(),
+                        atendimento.getDescricaoDoAtendimento(),
+                        atendimento.getValorDoAtendimento(),
+                        atendimento.getDataDoAtendimento()
+                );
         }
 }

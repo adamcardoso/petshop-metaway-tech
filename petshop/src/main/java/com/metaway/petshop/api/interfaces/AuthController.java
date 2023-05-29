@@ -1,6 +1,6 @@
 package com.metaway.petshop.api.interfaces;
 
-import com.metaway.petshop.dto.Login;
+import com.metaway.petshop.dto.LoginDTO;
 import com.metaway.petshop.dto.UsuarioDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,7 +21,7 @@ public interface AuthController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PostMapping("/login")
-    ResponseEntity<UsuarioDTO> login(@Valid @RequestBody Login login);
+    ResponseEntity<UsuarioDTO> login(@Valid @RequestBody LoginDTO loginDTO);
 
     @Operation(description = "Realiza o logout")
     @ApiResponses(value = {

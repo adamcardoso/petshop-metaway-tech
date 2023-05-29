@@ -2,7 +2,7 @@ package com.metaway.petshop.api.impl;
 
 import com.metaway.petshop.api.interfaces.AuthController;
 import com.metaway.petshop.config.security.TokenServiceImpl;
-import com.metaway.petshop.dto.Login;
+import com.metaway.petshop.dto.LoginDTO;
 import com.metaway.petshop.dto.UsuarioDTO;
 import com.metaway.petshop.entities.Usuario;
 import org.slf4j.Logger;
@@ -37,10 +37,10 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public ResponseEntity<UsuarioDTO> login(@Valid @RequestBody Login login) {
+    public ResponseEntity<UsuarioDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(login.usuario(), login.senha());
+                    new UsernamePasswordAuthenticationToken(loginDTO.usuario(), loginDTO.senha());
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
