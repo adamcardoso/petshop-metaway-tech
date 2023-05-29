@@ -1,4 +1,4 @@
-package com.metaway.petshop.api;
+package com.metaway.petshop.api.interfaces;
 
 import com.metaway.petshop.dto.ClienteDTO;
 import io.swagger.v3.oas.annotations.Operation;

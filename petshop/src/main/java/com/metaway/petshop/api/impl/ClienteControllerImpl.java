@@ -1,8 +1,9 @@
-package com.metaway.petshop.api;
+package com.metaway.petshop.api.impl;
 
+import com.metaway.petshop.api.interfaces.ClienteController;
 import com.metaway.petshop.dto.ClienteDTO;
 import com.metaway.petshop.exceptions.ResourceNotFoundException;
-import com.metaway.petshop.services.ClienteServiceImpl;
+import com.metaway.petshop.services.impl.ClienteServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -82,6 +83,7 @@ public class ClienteControllerImpl implements ClienteController {
         return ResponseEntity.ok().body(dto);
     }
 
+    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<Void> delete(UUID uuid) {
         logger.info("Endpoint delete chamado para o UUID: {}", uuid);

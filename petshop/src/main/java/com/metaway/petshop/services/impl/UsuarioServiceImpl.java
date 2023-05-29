@@ -1,4 +1,4 @@
-package com.metaway.petshop.services;
+package com.metaway.petshop.services.impl;
 
 import com.metaway.petshop.dto.UsuarioDTO;
 import com.metaway.petshop.dto.UsuarioInsertDTO;
@@ -10,6 +10,7 @@ import com.metaway.petshop.exceptions.EntityNotFoundException;
 import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.repositories.PerfilRepository;
 import com.metaway.petshop.repositories.UsuarioRepository;
+import com.metaway.petshop.services.interfaces.UsuarioService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -105,8 +106,4 @@ public class UsuarioServiceImpl implements UsuarioService {
             perfilRepository.findById(perfil.getPerfilUuid()).ifPresent(entity.getPerfis()::add);
         }
     }
-
-    /*private void copyDtoToEntity(UsuarioUpdateDTO userDTO, Usuario entity) {
-        entity.setNomeDoUsuario(userDTO.getUsername());
-    }*/
 }

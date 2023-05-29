@@ -1,4 +1,4 @@
-package com.metaway.petshop.services;
+package com.metaway.petshop.services.interfaces;
 
 import com.metaway.petshop.dto.UsuarioDTO;
 import com.metaway.petshop.dto.UsuarioInsertDTO;

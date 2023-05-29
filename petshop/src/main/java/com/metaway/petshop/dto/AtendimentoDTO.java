@@ -1,5 +1,6 @@
 package com.metaway.petshop.dto;
 
+import com.metaway.petshop.entities.Atendimento;
 import com.metaway.petshop.entities.Pets;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -14,5 +15,8 @@ public record AtendimentoDTO(
         @Schema(description = "Data do atendimento")
         String dataDoAtendimento
 ) {
-
+        public AtendimentoDTO(Atendimento atendimento) {
+                this(atendimento.getAtendimentoUuid(), atendimento.getPet(), atendimento.getDescricaoDoAtendimento(),
+                        atendimento.getValorDoAtendimento(), atendimento.getDataDoAtendimento());
+        }
 }

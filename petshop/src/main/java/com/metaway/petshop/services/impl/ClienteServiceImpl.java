@@ -1,4 +1,4 @@
-package com.metaway.petshop.services;
+package com.metaway.petshop.services.impl;
 
 import com.metaway.petshop.dto.ClienteDTO;
 import com.metaway.petshop.dto.EnderecoDTO;
@@ -7,6 +7,7 @@ import com.metaway.petshop.entities.Cliente;
 import com.metaway.petshop.exceptions.DatabaseException;
 import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.repositories.ClienteRepository;
+import com.metaway.petshop.services.interfaces.ClienteService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,6 @@
-package com.metaway.petshop.api;
+package com.metaway.petshop.api.impl;
 
+import com.metaway.petshop.api.interfaces.AuthController;
 import com.metaway.petshop.config.security.TokenServiceImpl;
 import com.metaway.petshop.dto.Login;
 import com.metaway.petshop.dto.UsuarioDTO;

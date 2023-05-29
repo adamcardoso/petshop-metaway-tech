@@ -1,9 +1,10 @@
-package com.metaway.petshop.api;
+package com.metaway.petshop.api.impl;
 
+import com.metaway.petshop.api.interfaces.UsuarioController;
 import com.metaway.petshop.dto.UsuarioDTO;
 import com.metaway.petshop.dto.UsuarioInsertDTO;
 import com.metaway.petshop.dto.UsuarioUpdateDTO;
-import com.metaway.petshop.services.UsuarioServiceImpl;
+import com.metaway.petshop.services.impl.UsuarioServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
