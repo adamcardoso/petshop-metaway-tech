@@ -20,14 +20,14 @@ import java.net.URI;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping("/api")
 public class AuthControllerImpl implements AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthControllerImpl.class);
     public static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
     public static final String HOME_PAGE_URI = "/home";
-    private final AuthenticationManager authenticationManager;
 
+    private final AuthenticationManager authenticationManager;
     private final TokenServiceImpl tokenServiceImpl;
 
     public AuthControllerImpl(AuthenticationManager authenticationManager, TokenServiceImpl tokenServiceImpl) {
@@ -38,31 +38,31 @@ public class AuthControllerImpl implements AuthController {
     @Override
     public ResponseEntity<UsuarioDTO> login(@Valid @RequestBody Login login) {
         try {
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(login.username(),
-                            login.password());
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(login.usuario(), login.senha());
 
-            Authentication authenticate = this.authenticationManager
-                    .authenticate(usernamePasswordAuthenticationToken);
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-            var usuario = (Usuario) authenticate.getPrincipal();
+            if (authentication.isAuthenticated()) {
+                Usuario usuario = (Usuario) authentication.getPrincipal();
 
-            logger.info("Login realizado com sucesso para o usuário {}", usuario.getNomeDoUsuario());
-            String token = tokenServiceImpl.gerarToken(usuario);
+                logger.info("Login realizado com sucesso para o usuário {}", usuario.getNomeDoUsuario());
+                String token = tokenServiceImpl.gerarToken(usuario);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER_PREFIX + token);
+                HttpHeaders headers = new HttpHeaders();
+                headers.add(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER_PREFIX + token);
 
-            if (tokenServiceImpl.validarToken(token)) {
-                return ResponseEntity.ok()
-                        .headers(headers)
-                        .location(URI.create(HOME_PAGE_URI))
-                        .body(new UsuarioDTO(usuario));
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                if (tokenServiceImpl.validarToken(token)) {
+                    return ResponseEntity.ok()
+                            .headers(headers)
+                            .location(URI.create(HOME_PAGE_URI))
+                            .body(new UsuarioDTO(usuario));
+                }
             }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (AuthenticationException e) {
-            logger.error(String.format("Erro de autenticação: %s", e.getMessage()), e);
+            logger.error("Erro de autenticação: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

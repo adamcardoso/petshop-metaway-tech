@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UsuarioUpdateValid {
-    String message() default "Validation error";
+    String message() default "Erro de validação";
 
     Class<?>[] groups() default {};
 

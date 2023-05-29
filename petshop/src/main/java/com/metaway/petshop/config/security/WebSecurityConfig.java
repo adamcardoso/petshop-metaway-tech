@@ -7,7 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
@@ -25,8 +24,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(jsr250Enabled = true)
-public class WebSecurityConfig implements TokenFilterConfig {
+public class WebSecurityConfig {
 
     private final TokenFilter filter;
 
@@ -34,20 +32,21 @@ public class WebSecurityConfig implements TokenFilterConfig {
         this.filter = filter;
     }
 
-    @Override
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/home", "/api/cliente").authenticated()
                 .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                .cors();
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/api/login").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/clientes", "/api/usuarios").authenticated()
+                .and().cors(corsCustomizer());
+
+        http.logout();
 
         return http.build();
     }
 
-    @Override
     public Customizer<CorsConfigurer<HttpSecurity>> corsCustomizer() {
         return cors -> cors.configurationSource(corsConfigurationSource());
     }
@@ -64,11 +63,10 @@ public class WebSecurityConfig implements TokenFilterConfig {
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:8081", "http://localhost:8080"));
+        config.setAllowedOrigins(List.of("http://localhost:8080"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;

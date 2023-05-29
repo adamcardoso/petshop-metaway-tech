@@ -34,15 +34,11 @@ public class Usuario implements UserDetails, Serializable {
     @JoinTable(name = "tb_usuario_perfil",
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "perfil_id"))
-    private Set<Perfil> perfis;
+    private Set<Perfil> perfis = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Perfil perfil : perfis) {
-            authorities.add(new SimpleGrantedAuthority(perfil.toString()));
-        }
-        return authorities;
+        return List.of(new SimpleGrantedAuthority(perfis.toString()));
     }
 
     @Override

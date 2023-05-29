@@ -42,11 +42,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioDTO insert(UsuarioInsertDTO userInsertDTO) {
+    public UsuarioDTO insert(UsuarioInsertDTO usuarioInsertDTO) {
         Usuario entity = new Usuario();
 
-        copyDtoToEntity(userInsertDTO, entity);
-        entity.setSenha(passwordEncoder.encode(userInsertDTO.senha())); // encrypting the senha
+        copyDtoToEntity(usuarioInsertDTO.userDTO(), entity);
+        entity.setSenha(passwordEncoder.encode(usuarioInsertDTO.getSenha())); // encrypting the senha
 
         entity = usuarioRepository.save(entity);
 
@@ -54,12 +54,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioDTO update(UUID id, UsuarioUpdateDTO userDTO) {
+    public UsuarioDTO update(UUID id, UsuarioUpdateDTO usuarioUpdateDTO) {
         try {
             Optional<Usuario> optionalEntity = usuarioRepository.findById(id);
             if (optionalEntity.isPresent()) {
                 Usuario entity = optionalEntity.get();
-                copyDtoToEntity(userDTO, entity);
+                copyDtoToEntity(usuarioUpdateDTO.userDTO(), entity);
                 entity = usuarioRepository.save(entity);
 
                 return new UsuarioDTO(entity);
@@ -86,27 +86,27 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<UsuarioDTO> findAll() {
-        Iterable<Usuario> persons = usuarioRepository.findAll();
-        List<Usuario> personModelList = new ArrayList<>();
-        for (Usuario userModel : persons) {
-            personModelList.add(userModel);
+        Iterable<Usuario> usuarios = usuarioRepository.findAll();
+        List<Usuario> listaDeUsuarios = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            listaDeUsuarios.add(usuario);
         }
-        return personModelList.stream().map(UsuarioDTO::new).collect(Collectors.toList());
+        return listaDeUsuarios.stream().map(UsuarioDTO::new).collect(Collectors.toList());
     }
 
-    private void copyDtoToEntity(UsuarioInsertDTO userDTO, Usuario entity) {
-        entity.setNomeDoUsuario(userDTO.nomeDoUsuario());
-        entity.setCpf(userDTO.cpf());
-        entity.setSenha(passwordEncoder.encode(userDTO.senha()));
+    private void copyDtoToEntity(UsuarioDTO userDTO, Usuario entity) {
+        entity.setNomeDoUsuario(userDTO.getNomeDoUsuario());
+        entity.setCpf(userDTO.getCpf());
+        entity.setSenha(passwordEncoder.encode(userDTO.getSenha()));
 
         entity.getPerfis().clear();
 
-        for (Perfil perfil : userDTO.perfis()) {
+        for (Perfil perfil : userDTO.getPerfis()) {
             perfilRepository.findById(perfil.getPerfilUuid()).ifPresent(entity.getPerfis()::add);
         }
     }
 
-    private void copyDtoToEntity(UsuarioUpdateDTO userDTO, Usuario entity) {
-        entity.setNomeDoUsuario(userDTO.nomeDoUsuario());
-    }
+    /*private void copyDtoToEntity(UsuarioUpdateDTO userDTO, Usuario entity) {
+        entity.setNomeDoUsuario(userDTO.getUsername());
+    }*/
 }

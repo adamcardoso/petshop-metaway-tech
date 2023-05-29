@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +26,7 @@ public class TokenServiceImpl implements TokenService {
         String token = JWT.create()
                 .withIssuer("Processos")
                 .withSubject(usuario.getUsername())
-                .withClaim("id", Collections.singletonList(usuario.getUsuarioUuid()))
+                .withClaim("id", usuario.getUsuarioUuid().toString())  // Convert UUID to String
                 .withExpiresAt(Date.from(LocalDateTime.now()
                         .plusMinutes(3)
                         .toInstant(ZoneOffset.of("-03:00"))))

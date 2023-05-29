@@ -14,22 +14,21 @@ import javax.validation.Valid;
 
 public interface AuthController {
 
-    @Operation(description = "Faz login")
+    @Operation(description = "Realiza o login")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Retorno OK para login"),
-            @ApiResponse(responseCode = "401", description = "Erro de autenticação dessa API"),
-            @ApiResponse(responseCode = "403", description = "Erro de autorização dessa API"),
-            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")
+            @ApiResponse(responseCode = "200", description = "Login bem-sucedido"),
+            @ApiResponse(responseCode = "401", description = "Erro de autenticação"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PostMapping("/login")
     ResponseEntity<UsuarioDTO> login(@Valid @RequestBody Login login);
 
-    @Operation(description = "Faz logout")
+    @Operation(description = "Realiza o logout")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Retorno OK para logout"),
-            @ApiResponse(responseCode = "401", description = "Erro de autenticação dessa API"),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado")
+            @ApiResponse(responseCode = "204", description = "Logout bem-sucedido"),
+            @ApiResponse(responseCode = "401", description = "Erro de autenticação"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    @PostMapping(value = "/logout")
+    @PostMapping("/logout")
     ResponseEntity<Void> logout(@RequestHeader("Authorization") String token);
 }

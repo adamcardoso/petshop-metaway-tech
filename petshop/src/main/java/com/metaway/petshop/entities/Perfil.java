@@ -16,13 +16,13 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "tb_perfil")
-@EqualsAndHashCode(of = "perfilUuid") // Alterado para perfilUuid
+@EqualsAndHashCode(of = "perfilUuid")
 public class Perfil implements GrantedAuthority, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID perfilUuid; // Alterado para perfilUuid
+    private UUID perfilUuid;
 
     @Enumerated(EnumType.STRING)
     private PerfilEnum nomeDoPerfil;

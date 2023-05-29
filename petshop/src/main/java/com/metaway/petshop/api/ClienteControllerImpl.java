@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -31,6 +32,7 @@ public class ClienteControllerImpl implements ClienteController {
         this.clienteServiceImpl = clienteServiceImpl;
     }
 
+    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<List<ClienteDTO>> findAll() {
         logger.info("Endpoint findAll chamado");
@@ -38,6 +40,7 @@ public class ClienteControllerImpl implements ClienteController {
         return ResponseEntity.ok().body(list);
     }
 
+    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<ClienteDTO> findById(UUID uuid) {
         logger.info("Endpoint findById chamado para o UUID: {}", uuid);
@@ -49,6 +52,7 @@ public class ClienteControllerImpl implements ClienteController {
         }
     }
 
+    @RolesAllowed({"CLIENTE", "ADMIN"})
     @Override
     public ResponseEntity<List<ClienteDTO>> findByName(String name) {
         logger.info("Endpoint findByName chamado para o nome: {}", name);
@@ -60,6 +64,7 @@ public class ClienteControllerImpl implements ClienteController {
         }
     }
 
+    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<ClienteDTO> insert(@Valid @RequestBody ClienteDTO dto) {
         logger.info("Endpoint insert chamado");
@@ -69,6 +74,7 @@ public class ClienteControllerImpl implements ClienteController {
         return ResponseEntity.created(uri).body(dto);
     }
 
+    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<ClienteDTO> update(UUID id, @Valid @RequestBody ClienteDTO dto) {
         logger.info("Endpoint update chamado para o UUID: {}", id);
