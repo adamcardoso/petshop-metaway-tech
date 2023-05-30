@@ -2,6 +2,7 @@ package com.metaway.petshop.api.impl;
 
 import com.metaway.petshop.api.interfaces.ContatoController;
 import com.metaway.petshop.dto.ContatoDTO;
+import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.services.impl.ContatoServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,18 +65,26 @@ public class ContatoControllerImpl implements ContatoController {
     public ResponseEntity<ContatoDTO> update(UUID id, @Valid @RequestBody ContatoDTO contatoDTO) {
         logger.info("Endpoint update chamado para o UUID: {}", id);
 
-        ContatoDTO updatedContato = contatoServiceImpl.update(id, contatoDTO);
-
-        return ResponseEntity.ok(updatedContato);
+        try {
+            ContatoDTO updatedContato = contatoServiceImpl.update(id, contatoDTO);
+            return ResponseEntity.ok(updatedContato);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Contato não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RolesAllowed("ADMIN")
     @Override
-    public ResponseEntity<Void> delete(UUID id) {
-        logger.info("Endpoint delete chamado para o UUID: {}", id);
+    public ResponseEntity<Void> delete(UUID uuid) {
+        logger.info("Endpoint delete chamado para o UUID: {}", uuid);
 
-        contatoServiceImpl.delete(id);
-
-        return ResponseEntity.noContent().build();
+        try {
+            contatoServiceImpl.delete(uuid);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            logger.error("Contato não encontrado: {}", uuid);
+            return ResponseEntity.notFound().build();
+        }
     }
 }

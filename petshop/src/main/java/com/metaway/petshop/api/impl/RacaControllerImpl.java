@@ -1,7 +1,9 @@
 package com.metaway.petshop.api.impl;
 
 import com.metaway.petshop.api.interfaces.RacaController;
+import com.metaway.petshop.dto.ClienteDTO;
 import com.metaway.petshop.dto.RacaDTO;
+import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.services.impl.RacaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,18 +66,26 @@ public class RacaControllerImpl implements RacaController {
     public ResponseEntity<RacaDTO> update(UUID id, @Valid @RequestBody RacaDTO racaDTO) {
         logger.info("Endpoint update chamado para o UUID: {}", id);
 
-        RacaDTO raca = racaService.update(id, racaDTO);
-
-        return ResponseEntity.ok(raca);
+        try {
+            RacaDTO raca = racaService.update(id, racaDTO);
+            return ResponseEntity.ok(raca);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Raça não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RolesAllowed("ADMIN")
     @Override
-    public ResponseEntity<Void> delete(UUID id) {
-        logger.info("Endpoint delete chamado para o UUID: {}", id);
+    public ResponseEntity<Void> delete(UUID uuid) {
+        logger.info("Endpoint delete chamado para o UUID: {}", uuid);
 
-        racaService.delete(id);
-
-        return ResponseEntity.noContent().build();
+        try {
+            racaService.delete(uuid);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            logger.error("Raça não encontrado: {}", uuid);
+            return ResponseEntity.notFound().build();
+        }
     }
 }

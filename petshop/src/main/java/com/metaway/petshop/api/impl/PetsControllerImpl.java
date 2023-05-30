@@ -2,6 +2,7 @@ package com.metaway.petshop.api.impl;
 
 import com.metaway.petshop.api.interfaces.PetsController;
 import com.metaway.petshop.dto.PetsDTO;
+import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.services.impl.PetsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,18 +65,26 @@ public class PetsControllerImpl implements PetsController {
     public ResponseEntity<PetsDTO> update(UUID id, @Valid @RequestBody PetsDTO petsDTO) {
         logger.info("Endpoint update chamado para o UUID: {}", id);
 
-        PetsDTO pets = petsService.update(id, petsDTO);
-
-        return ResponseEntity.ok(pets);
+        try {
+            PetsDTO pets = petsService.update(id, petsDTO);
+            return ResponseEntity.ok(pets);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Pet não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RolesAllowed("ADMIN")
     @Override
-    public ResponseEntity<Void> delete(UUID id) {
-        logger.info("Endpoint delete chamado para o UUID: {}", id);
+    public ResponseEntity<Void> delete(UUID uuid) {
+        logger.info("Endpoint delete chamado para o UUID: {}", uuid);
 
-        petsService.delete(id);
-
-        return ResponseEntity.noContent().build();
+        try {
+            petsService.delete(uuid);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            logger.error("Pet não encontrado: {}", uuid);
+            return ResponseEntity.notFound().build();
+        }
     }
 }

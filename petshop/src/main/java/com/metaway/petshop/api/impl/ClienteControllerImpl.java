@@ -80,15 +80,27 @@ public class ClienteControllerImpl implements ClienteController {
     @Override
     public ResponseEntity<ClienteDTO> update(UUID id, @Valid @RequestBody ClienteDTO dto) {
         logger.info("Endpoint update chamado para o UUID: {}", id);
-        dto = clienteServiceImpl.update(id, dto);
-        return ResponseEntity.ok().body(dto);
+
+        try {
+            ClienteDTO updatedCliente = clienteServiceImpl.update(id, dto);
+            return ResponseEntity.ok(updatedCliente);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Cliente não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<Void> delete(UUID uuid) {
         logger.info("Endpoint delete chamado para o UUID: {}", uuid);
-        clienteServiceImpl.delete(uuid);
-        return ResponseEntity.noContent().build();
+
+        try {
+            clienteServiceImpl.delete(uuid);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            logger.error("Cliente não encontrado: {}", uuid);
+            return ResponseEntity.notFound().build();
+        }
     }
 }

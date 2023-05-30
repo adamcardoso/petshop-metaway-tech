@@ -2,13 +2,14 @@ package com.metaway.petshop.api.impl;
 
 import com.metaway.petshop.api.interfaces.AtendimentoController;
 import com.metaway.petshop.dto.AtendimentoDTO;
-import com.metaway.petshop.services.impl.AtendimentoServiceImpl;
+import com.metaway.petshop.services.interfaces.AtendimentoService;
+import com.metaway.petshop.exceptions.ResourceNotFoundException;
+import com.metaway.petshop.exceptions.DatabaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -20,60 +21,70 @@ public class AtendimentoControllerImpl implements AtendimentoController {
 
     private static final Logger logger = LoggerFactory.getLogger(AtendimentoControllerImpl.class);
 
-    private final AtendimentoServiceImpl atendimentoServiceImpl;
+    private final AtendimentoService atendimentoService;
 
-    public AtendimentoControllerImpl(AtendimentoServiceImpl atendimentoServiceImpl) {
-        this.atendimentoServiceImpl = atendimentoServiceImpl;
+    public AtendimentoControllerImpl(AtendimentoService atendimentoService) {
+        this.atendimentoService = atendimentoService;
     }
 
-    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<List<AtendimentoDTO>> findAll() {
         logger.info("Endpoint findAll chamado");
 
-        List<AtendimentoDTO> list = atendimentoServiceImpl.findAll();
+        List<AtendimentoDTO> atendimentos = atendimentoService.findAll();
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(atendimentos);
     }
 
-    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<AtendimentoDTO> findById(UUID id) {
         logger.info("Endpoint findById chamado para o UUID: {}", id);
 
-        AtendimentoDTO atendimentoDTO = atendimentoServiceImpl.findById(id);
-
-        return ResponseEntity.ok(atendimentoDTO);
+        try {
+            AtendimentoDTO atendimentoDTO = atendimentoService.findById(id);
+            return ResponseEntity.ok(atendimentoDTO);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Atendimento não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<AtendimentoDTO> insert(@Valid @RequestBody AtendimentoDTO atendimentoDTO) {
         logger.info("Endpoint insert chamado");
 
-        AtendimentoDTO insertedAtendimento = atendimentoServiceImpl.insert(atendimentoDTO);
+        AtendimentoDTO insertedAtendimento = atendimentoService.insert(atendimentoDTO);
 
         URI uri = URI.create("/api/atendimentos/" + insertedAtendimento.atendimentoUuid());
         return ResponseEntity.created(uri).body(insertedAtendimento);
     }
 
-    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<AtendimentoDTO> update(UUID id, @Valid @RequestBody AtendimentoDTO atendimentoDTO) {
         logger.info("Endpoint update chamado para o UUID: {}", id);
 
-        AtendimentoDTO updatedAtendimento = atendimentoServiceImpl.update(id, atendimentoDTO);
-
-        return ResponseEntity.ok(updatedAtendimento);
+        try {
+            AtendimentoDTO updatedAtendimento = atendimentoService.update(id, atendimentoDTO);
+            return ResponseEntity.ok(updatedAtendimento);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Atendimento não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @RolesAllowed("ADMIN")
     @Override
     public ResponseEntity<Void> delete(UUID id) {
         logger.info("Endpoint delete chamado para o UUID: {}", id);
 
-        atendimentoServiceImpl.delete(id);
-
-        return ResponseEntity.noContent().build();
+        try {
+            atendimentoService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            logger.error("Atendimento não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (DatabaseException e) {
+            logger.error("Erro ao deletar atendimento: {}", id);
+            return ResponseEntity.status(500).build();
+        }
     }
 }

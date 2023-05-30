@@ -4,6 +4,7 @@ import com.metaway.petshop.api.interfaces.UsuarioController;
 import com.metaway.petshop.dto.UsuarioDTO;
 import com.metaway.petshop.dto.UsuarioInsertDTO;
 import com.metaway.petshop.dto.UsuarioUpdateDTO;
+import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.services.impl.UsuarioServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +58,27 @@ public class UsuarioControllerImpl implements UsuarioController {
     @Override
     public ResponseEntity<UsuarioDTO> update(UUID id, UsuarioUpdateDTO dto) {
         logger.info("Endpoint update chamado para o UUID: {}", id);
-        UsuarioDTO newDto = usuarioServiceImpl.update(id, dto);
-        return ResponseEntity.ok().body(newDto);
+
+        try {
+            UsuarioDTO newDto = usuarioServiceImpl.update(id, dto);
+            return ResponseEntity.ok(newDto);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Usuário não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RolesAllowed("ADMIN")
     @Override
-    public ResponseEntity<Void> delete(UUID id) {
-        logger.info("Endpoint delete chamado para o UUID: {}", id);
-        usuarioServiceImpl.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> delete(UUID uuid) {
+        logger.info("Endpoint delete chamado para o UUID: {}", uuid);
+
+        try {
+            usuarioServiceImpl.delete(uuid);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            logger.error("Usuário não encontrado: {}", uuid);
+            return ResponseEntity.notFound().build();
+        }
     }
 }

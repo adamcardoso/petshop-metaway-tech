@@ -2,6 +2,7 @@ package com.metaway.petshop.api.impl;
 
 import com.metaway.petshop.api.interfaces.EnderecoController;
 import com.metaway.petshop.dto.EnderecoDTO;
+import com.metaway.petshop.exceptions.ResourceNotFoundException;
 import com.metaway.petshop.services.impl.EnderecoServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,18 +65,26 @@ public class EnderecoControllerImpl implements EnderecoController {
     public ResponseEntity<EnderecoDTO> update(UUID id, @Valid @RequestBody EnderecoDTO enderecoDTO) {
         logger.info("Endpoint update chamado para o UUID: {}", id);
 
-        EnderecoDTO endereco = enderecoService.update(id, enderecoDTO);
-
-        return ResponseEntity.ok(endereco);
+        try {
+            EnderecoDTO endereco = enderecoService.update(id, enderecoDTO);
+            return ResponseEntity.ok(endereco);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Endereço não encontrado: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RolesAllowed("ADMIN")
     @Override
-    public ResponseEntity<Void> delete(UUID id) {
-        logger.info("Endpoint delete chamado para o UUID: {}", id);
+    public ResponseEntity<Void> delete(UUID uuid) {
+        logger.info("Endpoint delete chamado para o UUID: {}", uuid);
 
-        enderecoService.delete(id);
-
-        return ResponseEntity.noContent().build();
+        try {
+            enderecoService.delete(uuid);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            logger.error("Endereço não encontrado: {}", uuid);
+            return ResponseEntity.notFound().build();
+        }
     }
 }
