@@ -28,28 +28,23 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public Optional<ClienteDTO> findById(UUID clienteUuid) {
-        Optional<Cliente> clienteOptional = clienteRepository.findById(clienteUuid);
-        return clienteOptional.map(ClienteDTO::new);
+        return clienteRepository.findById(clienteUuid)
+                .map(ClienteDTO::new);
     }
 
     @Override
     @Transactional
     public List<ClienteDTO> findAll() {
         try {
-            Iterable<Cliente> clientes = clienteRepository.findAll();
-            List<Cliente> clienteList = new ArrayList<>();
-
-            for (Cliente cliente : clientes) {
-                clienteList.add(cliente);
-            }
-
-            return clienteList.stream().map(ClienteDTO::new).collect(Collectors.toList());
+            List<Cliente> clienteList = clienteRepository.findAll();
+            return clienteList.stream()
+                    .map(ClienteDTO::new)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             // Tratar exceção e retornar fallback (lista vazia)
             return Collections.emptyList();
         }
     }
-
 
     @Override
     @Transactional
@@ -62,7 +57,9 @@ public class ClienteServiceImpl implements ClienteService {
                 throw new ResourceNotFoundException("Nome não encontrado: " + nomeDoCliente);
             }
 
-            return list.stream().map(ClienteDTO::new).collect(Collectors.toList());
+            return list.stream()
+                    .map(ClienteDTO::new)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             // Tratar exceção e retornar fallback (lista vazia)
             return Collections.emptyList();
@@ -75,10 +72,8 @@ public class ClienteServiceImpl implements ClienteService {
         try {
             Cliente cliente = ClienteDTO.toEntity(clienteDTO);
 
-            // Check if the cliente already exists in the database
             Optional<Cliente> existingClienteOptional = clienteRepository.findByCpf(cliente.getCpf());
             if (existingClienteOptional.isPresent()) {
-                // Cliente already exists, update its properties
                 Cliente existingCliente = existingClienteOptional.get();
                 existingCliente.setNomeDoCliente(cliente.getNomeDoCliente());
                 existingCliente.setDataDeCadastro(cliente.getDataDeCadastro());
@@ -90,7 +85,7 @@ public class ClienteServiceImpl implements ClienteService {
             cliente = clienteRepository.save(cliente);
             return new ClienteDTO(cliente);
         } catch (Exception e) {
-            // Tratar exceção e retornar fallback (lista vazia)
+            // Tratar exceção e retornar fallback (null)
             return null;
         }
     }
@@ -106,38 +101,47 @@ public class ClienteServiceImpl implements ClienteService {
                 entity = clienteRepository.save(entity);
                 return new ClienteDTO(entity);
             } else {
-                throw new ResourceNotFoundException("Id não encontrado " + uuid);
+                throw new ResourceNotFoundException("Id não encontrado: " + uuid);
             }
         } catch (ResourceNotFoundException e) {
-            throw new ResourceNotFoundException("Id not found " + uuid);
+            throw new ResourceNotFoundException("Id not found: " + uuid);
         } catch (Exception e) {
-            // Tratar exceção e retornar fallback (lista vazia)
-            return null;
+            // Tratar exceção e lançar exceção personalizada
+            throw new DatabaseException("Erro ao atualizar cliente: " + uuid);
         }
     }
 
-
     @Override
+    @Transactional
     public void delete(UUID uuid) {
         try {
             clienteRepository.deleteById(uuid);
-            System.out.println("Cliente deletado com sucesso!");
         } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("Id not found " + uuid);
+            // Lançar exceção personalizada
+            throw new ResourceNotFoundException("Id not found: " + uuid);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Integrity violation");
+            // Lançar exceção personalizada
+            throw new DatabaseException("Integrity violation: " + uuid);
+        } catch (Exception e) {
+            // Tratar exceção e lançar exceção personalizada
+            throw new DatabaseException("Erro ao excluir cliente: " + uuid);
         }
     }
 
     private void copyDtoToEntity(ClienteDTO dto, Cliente entity) {
         entity.setNomeDoCliente(dto.nomeDoCliente());
-        entity.setCpf(dto.cpf());
         entity.setDataDeCadastro(dto.dataDeCadastro());
-        entity.setEnderecos(dto.enderecos().stream()
-                .map(EnderecoDTO::toEntity)
-                .collect(Collectors.toList()));
-        entity.setPets(dto.pets().stream()
-                .map(PetsDTO::toEntity)
-                .collect(Collectors.toList()));
+        List<EnderecoDTO> enderecoDTOs = dto.enderecos();
+        if (enderecoDTOs != null) {
+            entity.setEnderecos(enderecoDTOs.stream()
+                    .map(EnderecoDTO::toEntity)
+                    .collect(Collectors.toList()));
+        }
+        List<PetsDTO> petsDTOs = dto.pets();
+        if (petsDTOs != null) {
+            entity.setPets(petsDTOs.stream()
+                    .map(PetsDTO::toEntity)
+                    .collect(Collectors.toList()));
+        }
     }
 }

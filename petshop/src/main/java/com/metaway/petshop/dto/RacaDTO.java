@@ -17,5 +17,8 @@ public record RacaDTO(
                 raca.getDescricao()
         );
     }
-}
 
+    public Raca toEntity() {
+        return new Raca(racaUuid, descricao);
+    }
+}

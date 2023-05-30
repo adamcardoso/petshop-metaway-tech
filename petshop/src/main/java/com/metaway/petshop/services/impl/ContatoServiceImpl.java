@@ -9,16 +9,14 @@ import com.metaway.petshop.services.interfaces.ContatoService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import java.util.stream.StreamSupport;
 
 @Service
 public class ContatoServiceImpl implements ContatoService {
-
 
     private final ContatoRepository contatoRepository;
 
@@ -28,22 +26,17 @@ public class ContatoServiceImpl implements ContatoService {
 
     @Override
     public ContatoDTO findById(UUID uuid) {
-        Optional<Contato> obj = contatoRepository.findById(uuid);
-        Contato entity = obj.orElseThrow(() -> new ResourceNotFoundException("Error! Entity not found"));
-
+        Contato entity = contatoRepository.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Contato not found: " + uuid));
         return new ContatoDTO(entity);
     }
 
     @Override
     public List<ContatoDTO> findAll() {
-        Iterable<Contato> atendimentos = contatoRepository.findAll();
-        List<Contato> atendimentoList = new ArrayList<>();
-
-        for (Contato atendimento : atendimentos) {
-            atendimentoList.add(atendimento);
-        }
-
-        return atendimentoList.stream().map(ContatoDTO::new).collect(Collectors.toList());
+        Iterable<Contato> contatos = contatoRepository.findAll();
+        return StreamSupport.stream(contatos.spliterator(), false)
+                .map(ContatoDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -56,30 +49,22 @@ public class ContatoServiceImpl implements ContatoService {
 
     @Override
     public ContatoDTO update(UUID uuid, ContatoDTO contatoDTO) {
-        try{
-            Optional<Contato> optionalAtendimento = contatoRepository.findById(uuid);
-            if (optionalAtendimento.isPresent()){
-                Contato entity = optionalAtendimento.get();
-                copyDtoToEntity(contatoDTO, entity);
-                entity = contatoRepository.save(entity);
-                return new ContatoDTO(entity);
-            }else {
-                throw new ResourceNotFoundException("Id não encontrado " + uuid);
-            }
-        }catch (ResourceNotFoundException e) {
-            throw new ResourceNotFoundException("Id not found " + uuid);
-        }
+        Optional<Contato> optionalContato = contatoRepository.findById(uuid);
+        Contato entity = optionalContato.orElseThrow(() -> new ResourceNotFoundException("Contato not found: " + uuid));
+        copyDtoToEntity(contatoDTO, entity);
+        entity = contatoRepository.save(entity);
+        return new ContatoDTO(entity);
     }
 
     @Override
     public void delete(UUID id) {
         if (!contatoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Erro! Atebdunebti com id: " + id + " não encontrado!");
+            throw new ResourceNotFoundException("Contato not found: " + id);
         }
         try {
             contatoRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Error! Integrity violation");
+            throw new DatabaseException("Error deleting contato: " + id);
         }
     }
 

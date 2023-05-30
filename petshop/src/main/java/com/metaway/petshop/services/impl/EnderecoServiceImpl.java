@@ -15,7 +15,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-
 @Service
 public class EnderecoServiceImpl implements EnderecoService {
 
@@ -27,16 +26,14 @@ public class EnderecoServiceImpl implements EnderecoService {
 
     @Override
     public EnderecoDTO findById(UUID uuid) {
-        Optional<Endereco> obj = enderecoRepository.findById(uuid);
-        Endereco entity = obj.orElseThrow(() -> new ResourceNotFoundException("Error! Entity not found"));
-
+        Endereco entity = enderecoRepository.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Endereco not found: " + uuid));
         return EnderecoDTO.fromEntity(entity);
     }
 
     @Override
     public List<EnderecoDTO> findAll() {
         Iterable<Endereco> enderecos = enderecoRepository.findAll();
-
         return StreamSupport.stream(enderecos.spliterator(), false)
                 .map(EnderecoDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -52,8 +49,7 @@ public class EnderecoServiceImpl implements EnderecoService {
     @Override
     public EnderecoDTO update(UUID uuid, EnderecoDTO enderecoDTO) {
         Optional<Endereco> optionalEndereco = enderecoRepository.findById(uuid);
-        Endereco entity = optionalEndereco.orElseThrow(() -> new ResourceNotFoundException("Id not found " + uuid));
-
+        Endereco entity = optionalEndereco.orElseThrow(() -> new ResourceNotFoundException("Endereco not found: " + uuid));
         copyDtoToEntity(enderecoDTO, entity);
         entity = enderecoRepository.save(entity);
         return EnderecoDTO.fromEntity(entity);
@@ -62,13 +58,12 @@ public class EnderecoServiceImpl implements EnderecoService {
     @Override
     public void delete(UUID id) {
         if (!enderecoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Endereço com ID " + id + " não encontrado!");
+            throw new ResourceNotFoundException("Endereco not found: " + id);
         }
-
         try {
             enderecoRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Integridade do banco de dados violada");
+            throw new DatabaseException("Error deleting endereco: " + id);
         }
     }
 

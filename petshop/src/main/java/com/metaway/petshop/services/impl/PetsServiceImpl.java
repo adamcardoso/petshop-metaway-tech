@@ -26,16 +26,14 @@ public class PetsServiceImpl implements PetsService {
 
     @Override
     public PetsDTO findById(UUID uuid) {
-        Optional<Pets> obj = petsRepository.findById(uuid);
-        Pets entity = obj.orElseThrow(() -> new ResourceNotFoundException("Error! Entity not found"));
-
+        Pets entity = petsRepository.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Pet not found: " + uuid));
         return PetsDTO.fromEntity(entity);
     }
 
     @Override
     public List<PetsDTO> findAll() {
         Iterable<Pets> pets = petsRepository.findAll();
-
         return StreamSupport.stream(pets.spliterator(), false)
                 .map(PetsDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -51,8 +49,7 @@ public class PetsServiceImpl implements PetsService {
     @Override
     public PetsDTO update(UUID uuid, PetsDTO petsDTO) {
         Optional<Pets> optionalPets = petsRepository.findById(uuid);
-        Pets entity = optionalPets.orElseThrow(() -> new ResourceNotFoundException("Id not found " + uuid));
-
+        Pets entity = optionalPets.orElseThrow(() -> new ResourceNotFoundException("Pet not found: " + uuid));
         copyDtoToEntity(petsDTO, entity);
         entity = petsRepository.save(entity);
         return PetsDTO.fromEntity(entity);
@@ -61,13 +58,12 @@ public class PetsServiceImpl implements PetsService {
     @Override
     public void delete(UUID id) {
         if (!petsRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Pet with ID " + id + " not found!");
+            throw new ResourceNotFoundException("Pet not found: " + id);
         }
-
         try {
             petsRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Error! Integrity violation");
+            throw new DatabaseException("Error deleting pet: " + id);
         }
     }
 

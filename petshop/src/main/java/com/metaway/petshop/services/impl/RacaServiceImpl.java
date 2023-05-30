@@ -9,16 +9,14 @@ import com.metaway.petshop.services.interfaces.RacaService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import java.util.stream.StreamSupport;
 
 @Service
 public class RacaServiceImpl implements RacaService {
-
 
     private final RacaRepository racaRepository;
 
@@ -28,58 +26,44 @@ public class RacaServiceImpl implements RacaService {
 
     @Override
     public RacaDTO findById(UUID uuid) {
-        Optional<Raca> obj = racaRepository.findById(uuid);
-        Raca entity = obj.orElseThrow(() -> new ResourceNotFoundException("Error! Entity not found"));
-
+        Raca entity = racaRepository.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Raca not found: " + uuid));
         return new RacaDTO(entity);
     }
 
     @Override
     public List<RacaDTO> findAll() {
         Iterable<Raca> racas = racaRepository.findAll();
-        List<Raca> racaList = new ArrayList<>();
-
-        for (Raca raca : racas) {
-            racaList.add(raca);
-        }
-
-        return racaList.stream().map(RacaDTO::new).collect(Collectors.toList());
+        return StreamSupport.stream(racas.spliterator(), false)
+                .map(RacaDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
     public RacaDTO insert(RacaDTO dto) {
-        Raca entity = new Raca();
-        copyDtoToEntity(dto, entity);
+        Raca entity = dto.toEntity();
         entity = racaRepository.save(entity);
         return new RacaDTO(entity);
     }
 
     @Override
     public RacaDTO update(UUID uuid, RacaDTO racaDTO) {
-        try{
-            Optional<Raca> optionalRacas = racaRepository.findById(uuid);
-            if (optionalRacas.isPresent()){
-                Raca entity = optionalRacas.get();
-                copyDtoToEntity(racaDTO, entity);
-                entity = racaRepository.save(entity);
-                return new RacaDTO(entity);
-            }else {
-                throw new ResourceNotFoundException("Id não encontrado " + uuid);
-            }
-        }catch (ResourceNotFoundException e) {
-            throw new ResourceNotFoundException("Id not found " + uuid);
-        }
+        Optional<Raca> optionalRaca = racaRepository.findById(uuid);
+        Raca entity = optionalRaca.orElseThrow(() -> new ResourceNotFoundException("Raca not found: " + uuid));
+        copyDtoToEntity(racaDTO, entity);
+        entity = racaRepository.save(entity);
+        return new RacaDTO(entity);
     }
 
     @Override
     public void delete(UUID id) {
         if (!racaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Erro! Atebdunebti com id: " + id + " não encontrado!");
+            throw new ResourceNotFoundException("Raca not found: " + id);
         }
         try {
             racaRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Error! Integrity violation");
+            throw new DatabaseException("Error deleting raca: " + id);
         }
     }
 
