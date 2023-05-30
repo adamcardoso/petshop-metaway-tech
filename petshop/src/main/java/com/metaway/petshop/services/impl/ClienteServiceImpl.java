@@ -131,14 +131,16 @@ public class ClienteServiceImpl implements ClienteService {
     private void copyDtoToEntity(ClienteDTO dto, Cliente entity) {
         entity.setNomeDoCliente(dto.nomeDoCliente());
         entity.setDataDeCadastro(dto.dataDeCadastro());
+
         List<EnderecoDTO> enderecoDTOs = dto.enderecos();
-        if (enderecoDTOs != null) {
+
+        if (Objects.nonNull(enderecoDTOs)) {
             entity.setEnderecos(enderecoDTOs.stream()
                     .map(EnderecoDTO::toEntity)
                     .collect(Collectors.toList()));
         }
         List<PetsDTO> petsDTOs = dto.pets();
-        if (petsDTOs != null) {
+        if (Objects.nonNull(petsDTOs)) {
             entity.setPets(petsDTOs.stream()
                     .map(PetsDTO::toEntity)
                     .collect(Collectors.toList()));

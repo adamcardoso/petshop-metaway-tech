@@ -27,6 +27,9 @@ public class Perfil implements GrantedAuthority, Serializable {
     @Enumerated(EnumType.STRING)
     private PerfilEnum nomeDoPerfil;
 
+    public Perfil(UUID uuid, String cliente) {
+    }
+
     @Override
     public String getAuthority() {
         return String.valueOf(nomeDoPerfil);

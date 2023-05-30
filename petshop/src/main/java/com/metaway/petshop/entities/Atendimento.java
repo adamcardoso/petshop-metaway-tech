@@ -1,5 +1,6 @@
 package com.metaway.petshop.entities;
 
+import com.metaway.petshop.dto.AtendimentoDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.persistence.*;
 import lombok.*;
@@ -34,4 +35,12 @@ public class Atendimento implements Serializable {
 
     @Schema(description = "Data do atendimento")
     private String dataDoAtendimento;
+
+    public Atendimento(AtendimentoDTO atendimentoDTO) {
+        this.atendimentoUuid = atendimentoDTO.atendimentoUuid();
+        this.pet = atendimentoDTO.pet();
+        this.descricaoDoAtendimento = atendimentoDTO.descricaoDoAtendimento();
+        this.valorDoAtendimento = atendimentoDTO.valorDoAtendimento();
+        this.dataDoAtendimento = atendimentoDTO.dataDoAtendimento();
+    }
 }

@@ -66,6 +66,10 @@ dependencies {
 	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Dependências de teste
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
 }
 
 flyway {

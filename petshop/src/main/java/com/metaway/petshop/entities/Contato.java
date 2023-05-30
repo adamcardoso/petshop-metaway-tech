@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -35,4 +34,13 @@ public class Contato implements Serializable {
     @OneToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    public Contato(UUID contatoUuid, String tag, String email, String telefone, String valor, Cliente cliente) {
+        this.contatoUuid = contatoUuid;
+        this.tag = tag;
+        this.email = email;
+        this.telefone = telefone;
+        this.valor = valor;
+        this.cliente = cliente;
+    }
 }

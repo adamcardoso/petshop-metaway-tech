@@ -9,10 +9,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
@@ -45,4 +45,17 @@ public class Cliente implements Serializable {
 
     @OneToMany(mappedBy = "cliente")
     private List<Pets> pets;
+
+    public Cliente(UUID clienteUuid, String nomeDoCliente, String cpf, LocalDate dataDeCadastro) {
+        this.clienteUuid = clienteUuid;
+        this.nomeDoCliente = nomeDoCliente;
+        this.cpf = cpf;
+        this.dataDeCadastro = dataDeCadastro;
+        this.enderecos = new ArrayList<>();
+        this.pets = new ArrayList<>();
+    }
+
+    public Cliente() {
+        this.enderecos = new ArrayList<>();
+    }
 }

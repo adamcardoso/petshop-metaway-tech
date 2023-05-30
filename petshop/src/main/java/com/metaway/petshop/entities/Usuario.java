@@ -36,9 +36,14 @@ public class Usuario implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "perfil_id"))
     private Set<Perfil> perfis = new HashSet<>();
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(perfis.toString()));
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        for (Perfil perfil : perfis) {
+            authorities.add(new SimpleGrantedAuthority(perfil.getAuthority()));
+        }
+        return authorities;
     }
 
     @Override

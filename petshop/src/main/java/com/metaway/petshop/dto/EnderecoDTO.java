@@ -1,8 +1,10 @@
 package com.metaway.petshop.dto;
 
+import com.metaway.petshop.entities.Cliente;
 import com.metaway.petshop.entities.Endereco;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public record EnderecoDTO(
@@ -27,9 +29,13 @@ public record EnderecoDTO(
         String tag
 ) {
     public static EnderecoDTO fromEntity(Endereco endereco) {
+        Cliente cliente = endereco.getCliente();
+        if (Objects.isNull(cliente)) {
+            throw new IllegalStateException("Endereco has no associated Cliente");
+        }
         return new EnderecoDTO(
                 endereco.getEnderecoUuid(),
-                endereco.getCliente().getClienteUuid(),
+                cliente.getClienteUuid(),
                 endereco.getLogradouro(),
                 endereco.getCidade(),
                 endereco.getBairro(),
