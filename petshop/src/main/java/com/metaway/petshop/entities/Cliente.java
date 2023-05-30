@@ -17,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "clienteUuid") // Alterado para clienteUuid
+@EqualsAndHashCode(of = "clienteUuid")
 @Entity
 @Table(name = "tb_cliente")
 public class Cliente implements Serializable {
@@ -27,7 +27,7 @@ public class Cliente implements Serializable {
     @Schema(description = "Código de identificação do cliente")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID clienteUuid; // Alterado para clienteUuid
+    private UUID clienteUuid;
 
     @Schema(description = "Nome do cliente")
     private String nomeDoCliente;
@@ -40,7 +40,7 @@ public class Cliente implements Serializable {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate dataDeCadastro;
 
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.PERSIST)
     private List<Endereco> enderecos;
 
     @OneToMany(mappedBy = "cliente")

@@ -18,8 +18,8 @@ public record PetsDTO(
         @Schema(description = "Nome do pet")
         String nomeDoPet
 ) {
-    public PetsDTO(Pets pets) {
-        this(
+    public static PetsDTO fromEntity(Pets pets) {
+        return new PetsDTO(
                 pets.getPetsUuid(),
                 pets.getCliente().getClienteUuid(),
                 pets.getRaca().getRacaUuid(),

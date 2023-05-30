@@ -24,7 +24,7 @@ public class Endereco implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID enderecoUuid;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 

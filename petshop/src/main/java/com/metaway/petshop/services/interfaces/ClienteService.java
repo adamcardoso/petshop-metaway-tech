@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface ClienteService {
     List<ClienteDTO> findAll();
 
-    Optional<ClienteDTO> findById(UUID uuid);
+    Optional<ClienteDTO> findById(UUID clienteUuid);
 
     List<ClienteDTO> findByName(String nomeDoCliente);
 

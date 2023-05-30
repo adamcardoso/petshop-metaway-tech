@@ -9,16 +9,14 @@ import com.metaway.petshop.services.interfaces.PetsService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import java.util.stream.StreamSupport;
 
 @Service
 public class PetsServiceImpl implements PetsService {
-
 
     private final PetsRepository petsRepository;
 
@@ -31,51 +29,41 @@ public class PetsServiceImpl implements PetsService {
         Optional<Pets> obj = petsRepository.findById(uuid);
         Pets entity = obj.orElseThrow(() -> new ResourceNotFoundException("Error! Entity not found"));
 
-        return new PetsDTO(entity);
+        return PetsDTO.fromEntity(entity);
     }
 
     @Override
     public List<PetsDTO> findAll() {
         Iterable<Pets> pets = petsRepository.findAll();
-        List<Pets> petsList = new ArrayList<>();
 
-        for (Pets pet : pets) {
-            petsList.add(pet);
-        }
-
-        return petsList.stream().map(PetsDTO::new).collect(Collectors.toList());
+        return StreamSupport.stream(pets.spliterator(), false)
+                .map(PetsDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
     public PetsDTO insert(PetsDTO dto) {
-        Pets entity = new Pets();
-        copyDtoToEntity(dto, entity);
+        Pets entity = dto.toEntity();
         entity = petsRepository.save(entity);
-        return new PetsDTO(entity);
+        return PetsDTO.fromEntity(entity);
     }
 
     @Override
     public PetsDTO update(UUID uuid, PetsDTO petsDTO) {
-        try{
-            Optional<Pets> optionalPets = petsRepository.findById(uuid);
-            if (optionalPets.isPresent()){
-                Pets entity = optionalPets.get();
-                copyDtoToEntity(petsDTO, entity);
-                entity = petsRepository.save(entity);
-                return new PetsDTO(entity);
-            }else {
-                throw new ResourceNotFoundException("Id não encontrado " + uuid);
-            }
-        }catch (ResourceNotFoundException e) {
-            throw new ResourceNotFoundException("Id not found " + uuid);
-        }
+        Optional<Pets> optionalPets = petsRepository.findById(uuid);
+        Pets entity = optionalPets.orElseThrow(() -> new ResourceNotFoundException("Id not found " + uuid));
+
+        copyDtoToEntity(petsDTO, entity);
+        entity = petsRepository.save(entity);
+        return PetsDTO.fromEntity(entity);
     }
 
     @Override
     public void delete(UUID id) {
         if (!petsRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Erro! Atebdunebti com id: " + id + " não encontrado!");
+            throw new ResourceNotFoundException("Pet with ID " + id + " not found!");
         }
+
         try {
             petsRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {

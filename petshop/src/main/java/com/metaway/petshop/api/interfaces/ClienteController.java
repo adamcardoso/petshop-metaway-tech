@@ -31,7 +31,6 @@ public interface ClienteController {
     @Parameters(value = {@Parameter(name = "id", in = ParameterIn.PATH)})
     @GetMapping(value = "/cliente/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ClienteDTO> findById(@PathVariable("id") UUID uuid);
-
     @Operation(description = "API para buscar pessoa por nome")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorno OK da Lista de pessoas"),

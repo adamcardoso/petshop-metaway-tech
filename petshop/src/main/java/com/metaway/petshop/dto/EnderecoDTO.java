@@ -26,8 +26,8 @@ public record EnderecoDTO(
         @Schema(description = "Tag do endereço")
         String tag
 ) {
-    public EnderecoDTO(Endereco endereco) {
-        this(
+    public static EnderecoDTO fromEntity(Endereco endereco) {
+        return new EnderecoDTO(
                 endereco.getEnderecoUuid(),
                 endereco.getCliente().getClienteUuid(),
                 endereco.getLogradouro(),
@@ -41,6 +41,7 @@ public record EnderecoDTO(
     public Endereco toEntity() {
         Endereco endereco = new Endereco();
         endereco.setEnderecoUuid(this.enderecoUuid());
+        endereco.setClienteId(this.clienteUuid());
         endereco.setLogradouro(this.logradouro());
         endereco.setCidade(this.cidade());
         endereco.setBairro(this.bairro());
@@ -50,5 +51,3 @@ public record EnderecoDTO(
         return endereco;
     }
 }
-
-

@@ -11,6 +11,7 @@ import com.metaway.petshop.services.interfaces.ClienteService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,14 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    @Transactional
+    public Optional<ClienteDTO> findById(UUID clienteUuid) {
+        Optional<Cliente> clienteOptional = clienteRepository.findById(clienteUuid);
+        return clienteOptional.map(ClienteDTO::new);
+    }
+
+    @Override
+    @Transactional
     public List<ClienteDTO> findAll() {
         Iterable<Cliente> clientes = clienteRepository.findAll();
         List<Cliente> clienteList = new ArrayList<>();
@@ -39,13 +48,9 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteList.stream().map(ClienteDTO::new).collect(Collectors.toList());
     }
 
-    @Override
-    public Optional<ClienteDTO> findById(UUID uuid) {
-        Optional<Cliente> obj = clienteRepository.findById(uuid);
-        return obj.map(ClienteDTO::new);
-    }
 
     @Override
+    @Transactional
     public List<ClienteDTO> findByName(String nomeDoCliente) {
         List<Cliente> list = clienteRepository.findByNomeDoClienteContainingIgnoreCase(nomeDoCliente);
 
@@ -57,29 +62,46 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public ClienteDTO insert(ClienteDTO dto) {
-        Cliente entity = new Cliente();
-        copyDtoToEntity(dto, entity);
-        entity = clienteRepository.save(entity);
-        return new ClienteDTO(entity);
+    @Transactional
+    public ClienteDTO insert(ClienteDTO clienteDTO) {
+        Cliente cliente = ClienteDTO.toEntity(clienteDTO);
+
+        // Check if the cliente already exists in the database
+        Optional<Cliente> existingClienteOptional = clienteRepository.findByCpf(cliente.getCpf());
+        if (existingClienteOptional.isPresent()) {
+            // Cliente already exists, update its properties
+            Cliente existingCliente = existingClienteOptional.get();
+            existingCliente.setNomeDoCliente(cliente.getNomeDoCliente());
+            existingCliente.setDataDeCadastro(cliente.getDataDeCadastro());
+            existingCliente.setEnderecos(cliente.getEnderecos());
+            existingCliente.setPets(cliente.getPets());
+            cliente = existingCliente;
+        }
+
+        cliente = clienteRepository.save(cliente);
+        return new ClienteDTO(cliente);
     }
 
+
+
     @Override
+    @Transactional
     public ClienteDTO update(UUID uuid, ClienteDTO clienteDTO) {
-        try{
+        try {
             Optional<Cliente> optionalCliente = clienteRepository.findById(uuid);
-            if (optionalCliente.isPresent()){
+            if (optionalCliente.isPresent()) {
                 Cliente entity = optionalCliente.get();
                 copyDtoToEntity(clienteDTO, entity);
                 entity = clienteRepository.save(entity);
                 return new ClienteDTO(entity);
-            }else {
+            } else {
                 throw new ResourceNotFoundException("Id não encontrado " + uuid);
             }
-        }catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException("Id not found " + uuid);
         }
     }
+
 
     @Override
     public void delete(UUID uuid) {

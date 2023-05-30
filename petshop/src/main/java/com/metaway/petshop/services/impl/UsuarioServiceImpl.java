@@ -96,13 +96,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     private void copyDtoToEntity(UsuarioDTO userDTO, Usuario entity) {
-        entity.setNomeDoUsuario(userDTO.getNomeDoUsuario());
-        entity.setCpf(userDTO.getCpf());
-        entity.setSenha(passwordEncoder.encode(userDTO.getSenha()));
+        entity.setNomeDoUsuario(userDTO.nomeDoUsuario());
+        entity.setCpf(userDTO.cpf());
+        entity.setSenha(passwordEncoder.encode(userDTO.senha()));
 
         entity.getPerfis().clear();
 
-        for (Perfil perfil : userDTO.getPerfis()) {
+        for (Perfil perfil : userDTO.perfis()) {
             perfilRepository.findById(perfil.getPerfilUuid()).ifPresent(entity.getPerfis()::add);
         }
     }

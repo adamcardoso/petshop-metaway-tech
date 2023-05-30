@@ -45,13 +45,14 @@ public class ClienteControllerImpl implements ClienteController {
     @Override
     public ResponseEntity<ClienteDTO> findById(UUID uuid) {
         logger.info("Endpoint findById chamado para o UUID: {}", uuid);
-        Optional<ClienteDTO> clienteDTO = clienteServiceImpl.findById(uuid);
-        if (clienteDTO.isPresent()) {
-            return ResponseEntity.ok(clienteDTO.get());
+        Optional<ClienteDTO> clienteDTOOptional = clienteServiceImpl.findById(uuid);
+        if (clienteDTOOptional.isPresent()) {
+            return ResponseEntity.ok(clienteDTOOptional.get());
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso não encontrado");
         }
     }
+
 
     @RolesAllowed({"CLIENTE", "ADMIN"})
     @Override

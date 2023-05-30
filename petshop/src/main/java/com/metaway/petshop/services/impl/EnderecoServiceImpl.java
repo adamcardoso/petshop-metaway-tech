@@ -9,16 +9,15 @@ import com.metaway.petshop.services.interfaces.EnderecoService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 @Service
 public class EnderecoServiceImpl implements EnderecoService {
-
 
     private final EnderecoRepository enderecoRepository;
 
@@ -31,60 +30,49 @@ public class EnderecoServiceImpl implements EnderecoService {
         Optional<Endereco> obj = enderecoRepository.findById(uuid);
         Endereco entity = obj.orElseThrow(() -> new ResourceNotFoundException("Error! Entity not found"));
 
-        return new EnderecoDTO(entity);
+        return EnderecoDTO.fromEntity(entity);
     }
 
     @Override
     public List<EnderecoDTO> findAll() {
-        Iterable<Endereco> atendimentos = enderecoRepository.findAll();
-        List<Endereco> atendimentoList = new ArrayList<>();
+        Iterable<Endereco> enderecos = enderecoRepository.findAll();
 
-        for (Endereco atendimento : atendimentos) {
-            atendimentoList.add(atendimento);
-        }
-
-        return atendimentoList.stream().map(EnderecoDTO::new).collect(Collectors.toList());
+        return StreamSupport.stream(enderecos.spliterator(), false)
+                .map(EnderecoDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
     public EnderecoDTO insert(EnderecoDTO dto) {
-        Endereco entity = new Endereco();
-        copyDtoToEntity(dto, entity);
+        Endereco entity = dto.toEntity();
         entity = enderecoRepository.save(entity);
-        return new EnderecoDTO(entity);
+        return EnderecoDTO.fromEntity(entity);
     }
 
     @Override
     public EnderecoDTO update(UUID uuid, EnderecoDTO enderecoDTO) {
-        try{
-            Optional<Endereco> optionalAtendimento = enderecoRepository.findById(uuid);
-            if (optionalAtendimento.isPresent()){
-                Endereco entity = optionalAtendimento.get();
-                copyDtoToEntity(enderecoDTO, entity);
-                entity = enderecoRepository.save(entity);
-                return new EnderecoDTO(entity);
-            }else {
-                throw new ResourceNotFoundException("Id não encontrado " + uuid);
-            }
-        }catch (ResourceNotFoundException e) {
-            throw new ResourceNotFoundException("Id not found " + uuid);
-        }
+        Optional<Endereco> optionalEndereco = enderecoRepository.findById(uuid);
+        Endereco entity = optionalEndereco.orElseThrow(() -> new ResourceNotFoundException("Id not found " + uuid));
+
+        copyDtoToEntity(enderecoDTO, entity);
+        entity = enderecoRepository.save(entity);
+        return EnderecoDTO.fromEntity(entity);
     }
 
     @Override
     public void delete(UUID id) {
         if (!enderecoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Erro! Atebdunebti com id: " + id + " não encontrado!");
+            throw new ResourceNotFoundException("Endereço com ID " + id + " não encontrado!");
         }
+
         try {
             enderecoRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Error! Integrity violation");
+            throw new DatabaseException("Integridade do banco de dados violada");
         }
     }
 
     private void copyDtoToEntity(EnderecoDTO dto, Endereco entity) {
-        entity.setEnderecoUuid(dto.enderecoUuid());
         entity.setLogradouro(dto.logradouro());
         entity.setCidade(dto.cidade());
         entity.setBairro(dto.bairro());

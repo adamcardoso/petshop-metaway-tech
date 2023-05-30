@@ -1,6 +1,9 @@
 package com.metaway.petshop.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.metaway.petshop.entities.Cliente;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 public record ClienteDTO(
         @Schema(description = "Código de identificação do cliente")
         UUID clienteUuid,
@@ -19,7 +21,8 @@ public record ClienteDTO(
         @Schema(description = "CPF do cliente")
         String cpf,
         @Schema(description = "Data de cadastro do cliente")
-        @JsonFormat(pattern = "yyyy-MM-dd")
+        @JsonDeserialize(using = LocalDateDeserializer.class)
+        @JsonSerialize(using = LocalDateSerializer.class)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         LocalDate dataDeCadastro,
 
@@ -35,9 +38,27 @@ public record ClienteDTO(
                 cliente.getNomeDoCliente(),
                 cliente.getCpf(),
                 cliente.getDataDeCadastro(),
-                cliente.getEnderecos().stream().map(EnderecoDTO::new).collect(Collectors.toList()),
-                cliente.getPets().stream().map(PetsDTO::new).collect(Collectors.toList())
+                cliente.getEnderecos().stream()
+                        .map(EnderecoDTO::fromEntity)
+                        .collect(Collectors.toList()),
+                cliente.getPets().stream()
+                        .map(PetsDTO::fromEntity)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public static Cliente toEntity(ClienteDTO dto) {
+        return new Cliente(
+                dto.clienteUuid(),
+                dto.nomeDoCliente(),
+                dto.cpf(),
+                dto.dataDeCadastro(),
+                dto.enderecos.stream()
+                        .map(EnderecoDTO::toEntity)
+                        .collect(Collectors.toList()),
+                dto.pets.stream()
+                        .map(PetsDTO::toEntity)
+                        .collect(Collectors.toList())
         );
     }
 }
-
